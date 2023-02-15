@@ -1,0 +1,22 @@
+{
+  "name": "be-book-store-v01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://kdt-gitlab.elice.io/iot_track/class_01/web_project2/team6/be-book-store-v01.git"
+  },
+  "author": "yoon",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "formidable": "^2.1.1",
+    "mongoose": "^6.9.1"
+  }
+}

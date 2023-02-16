@@ -20,9 +20,7 @@ router.post('/create', async (req, res, next) => {
 
   try {
     const savedOrder = await orderService.createOrder();
-    res.json({ result: 'completed' });
   } catch (err) {
-    res.json({ errorMessage: err });
     console.log(err);
   }
 

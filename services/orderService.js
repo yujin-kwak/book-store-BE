@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const OrderModel = require('../models/schemas/order');
 const OrderItemModel = require('../models/schemas/orderItem');
 const BookModel = require('../models/schemas/book');
@@ -28,14 +29,17 @@ class OrderService {
   }
 
   async createOrderItem() {
-    for (const orderItem of this.orderItems) {
+    for (const orderItemId of this.orderItems) {
+      console.log('orderItem', typeof orderItemId);
       try {
-        const book = await OrderModel.findById(orderItem.id);
+        const book = await BookModel.findById(orderItemId);
+        console.log('book', book);
         const orderItem = new OrderItemModel({
           orderId: this.orderId,
-          quantity: orderItem.quantity,
+          quantity: book.quantity,
           price: book.price
         });
+
         await orderItem.save();
         return orderItem;
       } catch (err) {

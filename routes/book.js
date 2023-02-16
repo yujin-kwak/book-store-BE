@@ -33,3 +33,32 @@ router.get('/read', async (req, res, next) => {
   const result = await BookModel.find({});
   res.send(result);
 });
+
+const formModified = new formidable.IncomingForm();
+router.put('/update', async (req, res, next) => {
+  formModified.parse(req, async (err, fields, files) => {
+    const { id, title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
+    console.log(fields);
+    await BookModel.updateOne({ _id: id }, { title, author, category, image, price, score, quantity, condition, publishedDate, publisher })
+      .then(() => {
+        res.json({ result: 'completed' });
+      })
+      .catch((err) => {
+        res.json({ errorMessage: err });
+        console.log(err);
+      });
+  });
+});
+
+router.delete('/delete/:id', async (req, res, next) => {
+  const { id } = req.params;
+
+  await BookModel.deleteOne({ _id: id })
+    .then(() => {
+      res.json({ result: 'completed' });
+    })
+    .catch((err) => {
+      res.json({ errorMessage: err });
+      console.log(err);
+    });
+});

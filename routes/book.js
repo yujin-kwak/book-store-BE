@@ -27,8 +27,6 @@ router.post('/create', (req, res, next) => {
   });
 });
 
-module.exports = router;
-
 router.get('/read', async (req, res, next) => {
   const result = await BookModel.find({});
   res.send(result);
@@ -62,3 +60,5 @@ router.delete('/delete/:id', async (req, res, next) => {
       console.log(err);
     });
 });
+
+module.exports = router;

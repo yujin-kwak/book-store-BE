@@ -52,7 +52,7 @@ router.put('/update', async (req, res, next) => {
 
 router.delete('/delete/:id', async (req, res, next) => {
   const { id } = req.params;
-
+  console.log(id);
   await BookModel.deleteOne({ _id: id })
     .then(() => {
       res.json({ result: 'completed' });

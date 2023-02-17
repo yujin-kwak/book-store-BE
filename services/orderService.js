@@ -14,6 +14,7 @@ class OrderService {
       email,
       totalPrice
     });
+
     await order.save();
     return order;
   }
@@ -38,16 +39,14 @@ class OrderService {
     }
   }
 
-  async readOrder() {
-    const result = await OrderModel.find({});
+  async readOrder(userId) {
+    const result = await OrderModel.findOne({ userId: userId }).populate('userId');
+    console.log('populated result: ', result);
     return result;
   }
 
-  async updateOrder() {
-    await OrderModel.updateOne(
-      { _id: this.id },
-      { orderId: this.orderId, userId: this.userId, orderItems: this.orderItems, address: this.address, phone: this.phone, email: this.email, totalPrice: this.totalPrice }
-    );
+  async updateOrder({ _id, orderId, userId, orderItemsIds, address, phone, email, totalPrice, date }) {
+    await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemsIds, address, phone, email, totalPrice, date });
   }
 
   async deleteOrder() {

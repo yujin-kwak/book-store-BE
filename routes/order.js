@@ -4,75 +4,34 @@ const OrderService = require('../services/orderService');
 const IDGenerator = require('./idGenerator');
 
 router.post('/create', async (req, res, next) => {
-  console.log(req.body);
   const idGenerator = new IDGenerator('order', 0);
   const orderId = await idGenerator.getID();
-  const { userName, orderItems, address, phone, email, totalPrice } = req.body;
-  const orderService = new OrderService({
-    orderId,
-    userName,
-    orderItems,
-    address,
-    phone,
-    email,
-    totalPrice
-  });
-
+  const { userId, orderItems, address, phone, email, totalPrice } = req.body;
+  console.log('req.boddddy: ', req.body);
+  console.log('orders: ', orderItems);
+  const status = 'pending';
+  const orderService = new OrderService();
+  const orderItemsIds = orderItems.map((order) => order.bookId);
   try {
-    const savedOrder = await orderService.createOrder();
-  } catch (err) {
-    console.log(err);
-  }
+    const savedOrder = await orderService.createOrder({ orderId, userId, orderItemsIds, address, phone, email, totalPrice });
 
-  try {
-    const savedOrderItem = await orderService.createOrderItem();
+    const savedOrderItem = await orderService.createOrderItem({ orderId, orderItems, status });
     res.json({ result: 'completed' });
   } catch (err) {
     res.json({ errorMessage: err });
     console.log(err);
   }
-
-  // const savedOrder = await order.save();
-  // savedOrder.then(() => {
-  //   res.json({ result: 'completed' });
-  // });
-  // const savedOrder = await order.save()
-
-  // const post1 = new OrderItemModel({
-  //     OrderId: savedOrder._id,
-
-  //   })
 });
 
-// router.get('/read', async (req, res, next) => {
-//   const result = await UserModel.find({});
-//   res.send(result);
-// });
-
-// router.put('/update', async (req, res, next) => {
-//   const { id, name, email, password, phone, address, point } = req.body;
-//   console.log(req.body);
-//   await UserModel.updateOne({ _id: id }, { name, email, password, phone, address, point })
-//     .then(() => {
-//       res.json({ result: 'completed' });
-//     })
-//     .catch((err) => {
-//       res.json({ errorMessage: err });
-//       console.log(err);
-//     });
-// });
-
-// router.delete('/delete/:id', async (req, res, next) => {
-//   const { id } = req.params;
-
-//   await UserModel.deleteOne({ _id: id })
-//     .then(() => {
-//       res.json({ result: 'completed' });
-//     })
-//     .catch((err) => {
-//       res.json({ errorMessage: err });
-//       console.log(err);
-//     });
-// });
+router.get('/read', async (req, res, next) => {
+  const orderService = new OrderService();
+  try {
+    const result = await orderService.readOrder();
+    res.json(result);
+  } catch (err) {
+    res.json({ errorMessage: err });
+    console.log(err);
+  }
+});
 
 module.exports = router;

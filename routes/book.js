@@ -36,7 +36,7 @@ const formModified = new formidable.IncomingForm();
 router.put('/update', async (req, res, next) => {
   formModified.parse(req, async (err, fields, files) => {
     const { id, title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
-    console.log(fields);
+
     await BookModel.updateOne({ _id: id }, { title, author, category, image, price, score, quantity, condition, publishedDate, publisher })
       .then(() => {
         res.json({ result: 'completed' });
@@ -50,7 +50,7 @@ router.put('/update', async (req, res, next) => {
 
 router.delete('/delete/:id', async (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
+
   await BookModel.deleteOne({ _id: id })
     .then(() => {
       res.json({ result: 'completed' });

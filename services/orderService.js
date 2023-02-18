@@ -4,7 +4,7 @@ const OrderItemModel = require('../models/schemas/orderItem');
 const BookModel = require('../models/schemas/book');
 
 class OrderService {
-  async createOrder({ orderId, userId, orderItemIdList, address, phone, email, totalPrice }) {
+  static async createOrder({ orderId, userId, orderItemIdList, address, phone, email, totalPrice }) {
     const order = new OrderModel({
       orderId,
       userId,
@@ -19,7 +19,7 @@ class OrderService {
     return order;
   }
 
-  async createOrderItem({ orderId, orderItemList, status }) {
+  static async createOrderItem({ orderId, orderItemList, status }) {
     for (const order of orderItemList) {
       try {
         const orderItem = new OrderItemModel({
@@ -39,13 +39,13 @@ class OrderService {
     }
   }
 
-  async readOrder(userId) {
+  static async readOrder(userId) {
     const result = await OrderModel.findOne({ userId: userId }).populate('userId');
 
     return result;
   }
 
-  async updateOrder({ _id, orderId, userId, orderItemsIds, address, phone, email, totalPrice, date }) {
+  static async updateOrder({ _id, orderId, userId, orderItemsIds, address, phone, email, totalPrice, date }) {
     await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemsIds, address, phone, email, totalPrice, date });
   }
 

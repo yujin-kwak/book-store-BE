@@ -6,17 +6,20 @@ const dbconnect = require('./models/index');
 const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
 const orderRouter = require('./routes/orderRoute');
-dbconnect();
 const testRouter = require('./routes/testRouter');
 
+dbconnect();
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.use('/user', userRouter);
 app.use('/book', bookRouter);
 app.use('/order', orderRouter);
-// app.use('/test', testRouter);
+app.use('/test', testRouter);
+app.use('*', (req, res) => {
+  res.status(404);
+});
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);

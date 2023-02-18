@@ -6,7 +6,7 @@ const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
 const multer = require('multer');
 const { route } = require('./orderRoute');
-const upload = multer({ dest: '../imgStorage' });
+const upload = multer({ dest: './imgStorage' });
 
 router.post(
   '/create',
@@ -14,7 +14,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = req.body;
 
-    console.log('req.file', req.file);
+    console.log('req.fidddle', req.file);
     if (!title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
 
     const book = await BookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });

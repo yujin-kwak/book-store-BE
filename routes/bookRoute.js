@@ -6,46 +6,23 @@ const BookService = require('../services/bookService');
 const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
 
-// router.post('/create', async (req, res, next) => {
-//   form.parse(req, async (err, fields, files) => {
-//     const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
-
-//     if (!title) {
-//       next(new Error('Title is required'));
-//       return;
-//     }
-
-//     try {
-//       const bookService = new BookService();
-//       const book = await bookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
-//       res.json({ result: 'completed', book });
-//     } catch (err) {
-//       res.json({ errorMessage: err });
-//       console.log(err);
-//     }
-//   });
-// });
-
-router.post(
-  './create',
-  asyncHandler(async (req, res) => {
-    form.parse(req, async (err, fields, files) => {
-      const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
-      if (!title || !author || !category || !image || !price || !condition || !publishedDate || !publisher) {
+router.post('/create', async (req, res, next) => {
+  form.parse(req, async (err, fields, files) => {
+    const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
+    try {
+      if (!title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) {
         throw new Error('Title is required');
       }
-
-      // try {
-      //   const bookService = new BookService();
-      //   const book = await bookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
-      //   res.json({ result: 'completed', book });
-      // } catch (err) {
-      //   res.json({ errorMessage: err });
-      //   console.log(err);
-      // }
-    });
-  })
-);
+      const bookService = new BookService();
+      const book = await bookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
+      res.json({ result: 'completed', book });
+    } catch (err) {
+      res.status(204).json({ result: err.message });
+      console.log(err);
+      next(err);
+    }
+  });
+});
 
 router.get('/read', async (req, res, next) => {
   const result = await BookModel.find({});

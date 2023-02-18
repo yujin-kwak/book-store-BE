@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 const BookModel = require('../models/schemas/book');
 
 class BookService {
-  async createBook(bookInfo) {
-    const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = bookInfo;
+  async createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher }) {
     const book = new BookModel({
       title,
       author,

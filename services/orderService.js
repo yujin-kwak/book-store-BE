@@ -4,11 +4,11 @@ const OrderItemModel = require('../models/schemas/orderItem');
 const BookModel = require('../models/schemas/book');
 
 class OrderService {
-  async createOrder({ orderId, userId, orderItemsIds, address, phone, email, totalPrice }) {
+  async createOrder({ orderId, userId, orderItemIdList, address, phone, email, totalPrice }) {
     const order = new OrderModel({
       orderId,
       userId,
-      orderItemsIds,
+      orderItemIdList,
       address,
       phone,
       email,
@@ -19,8 +19,8 @@ class OrderService {
     return order;
   }
 
-  async createOrderItem({ orderId, orderItems, status }) {
-    for (const order of orderItems) {
+  async createOrderItem({ orderId, orderItemList, status }) {
+    for (const order of orderItemList) {
       try {
         const orderItem = new OrderItemModel({
           orderId,
@@ -41,7 +41,7 @@ class OrderService {
 
   async readOrder(userId) {
     const result = await OrderModel.findOne({ userId: userId }).populate('userId');
-    console.log('populated result: ', result);
+
     return result;
   }
 
@@ -51,19 +51,6 @@ class OrderService {
 
   async deleteOrder() {
     await OrderModel.deleteOne({ _id: this.id });
-  }
-
-  async readOrderItem() {
-    const result = await OrderItemModel.find({});
-    return result;
-  }
-
-  async updateOrderItem() {
-    await OrderItemModel.updateOne({ _id: this.id }, { orderId: this.orderId, quantity: this.quantity, price: this.price });
-  }
-
-  async deleteOrderItem() {
-    await OrderItemModel.deleteOne({ _id: this.id });
   }
 }
 

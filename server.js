@@ -3,9 +3,9 @@ const app = express();
 const cors = require('cors');
 const port = process.env.PORT || 8080;
 const dbconnect = require('./models/index');
-const userRouter = require('./routes/user');
-const bookRouter = require('./routes/book');
-const orderRouter = require('./routes/order');
+const userRouter = require('./routes/userRoute');
+const bookRouter = require('./routes/bookRoute');
+const orderRouter = require('./routes/orderRoute');
 dbconnect();
 
 app.use(cors());

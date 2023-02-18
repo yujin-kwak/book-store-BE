@@ -6,14 +6,15 @@ const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
 const multer = require('multer');
 const { route } = require('./orderRoute');
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: '../imgStorage' });
 
 router.post(
-  '/test',
+  '/create',
   upload.single(),
   asyncHandler(async (req, res) => {
     const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = req.body;
 
+    console.log('req.file', req.file);
     if (!title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
 
     const book = await BookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
@@ -30,7 +31,6 @@ router.put('/update', upload.single(), async (req, res, next) => {
   const { id, title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = req.body;
   console.log(req.body);
   if (!id || !title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
-
   const book = await BookService.updateBook({ id, title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
   res.json({ result: 'completed', book });
 });
@@ -44,43 +44,5 @@ router.delete(
     res.json({ result: `${id} is deleted` });
   })
 );
-
-// router.post('/test', upload.single(), (req, res) => {
-//   console.log(req.body.author);
-//   res.send('test');
-// });
-
-// router.delete('/delete/:id', async (req, res, next) => {
-//   const { id } = req.params;
-
-//   await BookModel.deleteOne({ _id: id })
-//     .then(() => {
-//       res.json({ result: 'completed' });
-//     })
-//     .catch((err) => {
-//       res.json({ errorMessage: err });
-//       console.log(err);
-//     });
-// });
-
-// router.post(
-//   '/create',
-//   upload.single(),
-//   asyncHandler(async (req, res) => {
-//     const form = new formidable.IncomingForm();
-//     const fields = form.parse(req, async (err, fields, files) => {
-//       return fields;
-//     });
-//     console.log('sdfsflsjflsjflsd;', req.body);
-//     const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
-//     console.log(title);
-
-//     if (!title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
-
-//     const bookService = new BookService();
-//     const book = await bookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
-//     res.json({ result: 'completed', book });
-//   })
-// );
 
 module.exports = router;

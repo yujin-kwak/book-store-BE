@@ -4,22 +4,22 @@ const OrderItemModel = require('../models/schemas/orderItem');
 const BookModel = require('../models/schemas/book');
 
 class OrderService {
-  static async createOrder({ orderId, userId, orderItemIdList, address, phone, email, totalPrice }) {
+  static async createOrder({ orderId, userId, address, phone, email, totalPrice, status }) {
     const order = new OrderModel({
       orderId,
       userId,
-      orderItemIdList,
       address,
       phone,
       email,
-      totalPrice
+      totalPrice,
+      status
     });
 
     await order.save();
     return order;
   }
 
-  static async createOrderItem({ orderId, orderItemList, status }) {
+  static async createOrderItem({ orderId, orderItemList }) {
     for (const order of orderItemList) {
       try {
         const orderItem = new OrderItemModel({
@@ -27,8 +27,7 @@ class OrderService {
           bookId: order.bookId,
           bookTitle: order.title,
           quantity: order.quantity,
-          price: order.price,
-          status
+          price: order.price
         });
 
         await orderItem.save();
@@ -45,8 +44,8 @@ class OrderService {
     return result;
   }
 
-  static async updateOrder({ _id, orderId, userId, orderItemsIds, address, phone, email, totalPrice, date }) {
-    await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemsIds, address, phone, email, totalPrice, date });
+  static async updateOrder({ _id, orderId, userId, orderItemList, address, phone, email, totalPrice, date }) {
+    await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemList, address, phone, email, totalPrice });
   }
 
   async deleteOrder() {

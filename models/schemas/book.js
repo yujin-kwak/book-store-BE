@@ -6,7 +6,7 @@ const BookSchema = new Schema(
     id: Schema.Types.ObjectId,
     title: { type: String, required: true },
     author: { type: String, required: true },
-    category: { type: String, required: true },
+    category: { type: Schema.Types.ObjectId, ref: 'BookCategoryModel' },
     image: { data: Buffer, type: String, required: true },
     price: { type: Number, required: true },
     salePrice: { type: Number, required: true },

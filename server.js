@@ -17,13 +17,16 @@ app.use('/user', userRouter);
 app.use('/book', bookRouter);
 app.use('/order', orderRouter);
 app.use('/test', testRouter);
-app.use('*', (req, res) => {
-  res.status(404);
-});
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);
   res.status(200).json({ Error: err.message });
+});
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+app.get('*', (req, res) => {
+  res.status(400).send("Sorry can't find ddthat!");
 });
 
 app.listen(port, () => {

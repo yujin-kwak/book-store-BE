@@ -6,7 +6,7 @@ const OrderSchema = new Schema(
     id: Schema.Types.ObjectId,
     orderId: { type: String, required: true },
     userId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
-    orderItemsIds: [{ type: Schema.Types.ObjectId, ref: 'BookModel' }],
+    orderItemIdList: [{ type: Schema.Types.ObjectId, ref: 'BookModel' }],
     address: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true },

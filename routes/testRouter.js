@@ -14,7 +14,7 @@ const path = require('path');
 
 // const upload = multer({ storage: storage });
 
-const upload = multer({ dest: './imgStorage' });
+const upload = multer({ dest: 'imgStorage/' });
 
 router.post('/upload', upload.single('image'), (req, res, next) => {
   try {

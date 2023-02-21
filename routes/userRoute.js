@@ -1,14 +1,17 @@
 const express = require('express');
-router = express.Router();
-UserService = require('../services/userService');
-asyncHandler = require('../utils/asyncHandler');
+const router = express.Router();
+const UserService = require('../services/userService');
+const asyncHandler = require('../utils/asyncHandler');
+const hashPassword = require('../utils/hashPassword');
+const passport = require('passport');
 
 router.post(
   '/create',
   asyncHandler(async (req, res) => {
-    const { name, email, password, phone, address, point } = req.body;
-    if (!name || !email || !password || !phone || !address || !point) throw new Error('Missing required fields');
-    const user = await UserService.createUser({ name, email, password, phone, address, point });
+    const { name, userId, password, phone, address } = req.body;
+    if (!name || !userId || !password || !phone || !address) throw new Error('Missing required fields');
+
+    const user = await UserService.createUser({ name, userId, password, phone, address });
     res.status(200).json(user);
   })
 );
@@ -24,10 +27,10 @@ router.get(
 router.put(
   '/update',
   asyncHandler(async (req, res) => {
-    const { id, name, email, password, phone, address, point } = req.body;
-    if (!id || !name || !email || !password || !phone || !address || !point) throw new Error('Missing required fields');
+    const { id, name, userId, password, phone, address } = req.body;
+    if (!id || !name || !userId || !password || !phone || !address) throw new Error('Missing required fields');
 
-    const result = await UserService.updateUser({ id, name, email, password, phone, address, point });
+    const result = await UserService.updateUser({ id, name, userId, password, phone, address });
     res.status(200).json(result);
   })
 );

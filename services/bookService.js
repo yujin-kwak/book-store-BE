@@ -43,10 +43,8 @@ class BookService {
     return result;
   }
 
-  static async createCategory(category) {
-    const bookCategory = new BookCategoryModel({
-      category
-    });
+  static async createCategory(category, description) {
+    const bookCategory = new BookCategoryModel({ category, description });
     await bookCategory.save();
     return bookCategory;
   }

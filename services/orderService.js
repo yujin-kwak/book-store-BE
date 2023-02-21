@@ -19,8 +19,9 @@ class OrderService {
     return order;
   }
 
-  static async createOrderItem({ orderId, orderItemList }) {
-    for (const order of orderItemList) {
+  static async createOrderItem(orderId, orderItemList) {
+    console.log('order', orderItemList);
+    orderItemList.map(async (order) => {
       try {
         const orderItem = new OrderItemModel({
           orderId,
@@ -35,7 +36,7 @@ class OrderService {
       } catch (err) {
         console.log(err);
       }
-    }
+    });
   }
 
   static async readOrder(userId) {
@@ -44,12 +45,30 @@ class OrderService {
     return result;
   }
 
-  static async updateOrder({ _id, orderId, userId, orderItemList, address, phone, email, totalPrice, date }) {
+  static async updateOrder({ _id, orderId, userId, orderItemList, address, phone, email, totalPrice }) {
     await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemList, address, phone, email, totalPrice });
   }
 
-  async deleteOrder() {
-    await OrderModel.deleteOne({ _id: this.id });
+  static async deleteOrder(orderId) {
+    await OrderModel.deleteOne({ _id: orderId });
+    await OrderItemModel.deleteMany({ orderId: orderId });
+    return 'deleted';
+  }
+
+  static async readItem(orderId) {
+    const result = await OrderItemModel.find({ orderId: orderId }).populate('bookId');
+
+    return result;
+  }
+
+  static async updateItem(id) {
+    const orderItemModified = await OrderItemModel.updateOne({ _id: _id }, { $set: { orderId, bookId, bookTitle, quantity, price } });
+
+    return orderItemModified;
+  }
+  static async deleteItem(orderId) {
+    await OrderItemModel.deleteMany({ orderId: orderId });
+    return 'deleted';
   }
 }
 

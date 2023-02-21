@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 const UserModel = require('../models/schemas/user');
+const hashPassword = require('../utils/hashPassword');
 
 class UserService {
-  static async createUser({ name, email, password, phone, address, point }) {
+  static async createUser({ name, userId, password, phone, address }) {
+    const hashedPassword = hashPassword(password);
     const user = new UserModel({
       name,
-      email,
-      password,
+      userId,
+      password: hashedPassword,
       phone,
-      address,
-      point
+      address
     });
 
     await user.save();
@@ -22,8 +23,8 @@ class UserService {
     return result;
   }
 
-  static async updateUser({ id, name, email, password, phone, address, point }) {
-    const userModified = await UserModel.updateOne({ _id: id }, { $set: { name, email, password, phone, address, point } });
+  static async updateUser({ id, name, userId, password, phone, address }) {
+    const userModified = await UserModel.updateOne({ _id: id }, { $set: { name, userId, password, phone, address } });
 
     return userModified;
   }
@@ -31,6 +32,12 @@ class UserService {
   static async deleteUser(id) {
     const result = await UserModel.deleteOne({ _id: id });
     console.log(result);
+    return result;
+  }
+
+  //authRotuer.js에서 사용
+  static async getUserByUserId(userId) {
+    const result = await UserModel.findOne({ userId });
     return result;
   }
 }

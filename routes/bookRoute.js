@@ -63,11 +63,13 @@ router.delete(
 );
 
 router.post(
-  '/createCategory/:category',
+  '/createCategory/:category/:description',
   asyncHandler(async (req, res) => {
-    const { category } = req.params;
+    console.log(req.params);
+    const { category, description } = req.params;
+
     if (!category) throw new Error('Params(/:category) is missing');
-    const result = await BookService.createCategory(category);
+    const result = await BookService.createCategory(category, description);
     res.json(result);
   })
 );
@@ -97,7 +99,7 @@ router.delete(
     const { id } = req.params;
     if (!id) throw new Error('Params(/:id) is missing');
     const result = await BookService.deleteBookByCategory(id);
-    res.json(result);
+    res.status(200).json({ result: `${id} is deleted ${result}` });
   })
 );
 

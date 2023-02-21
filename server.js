@@ -7,11 +7,12 @@ const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
 const orderRouter = require('./routes/orderRoute');
 const testRouter = require('./routes/testRouter');
-// const serializeUser = require('./utils/passport/index');
+// const serializeUser = require('./utils/passport/index'); // this is for session way
 const serializeUser = require('./services/authService');
 const authRouter = require('./routes/authRoute');
-const mongoStore = require('connect-mongo'); // (node:10080) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead.
-
+const mongoStore = require('connect-mongo');
+// (node:10080) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead. <---- this is the warning should be checked!!!
+const getUserFromJWT = require('./middlewares/getUserFromJWT');
 const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
@@ -27,24 +28,30 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// This is inactive because it is not used in the current version which is setted up with passport-JWT
 app.use(cookieParser());
-app.use(
-  session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60
-    },
-    store: mongoStore.create({ mongoUrl: url })
-  })
-);
-app.use(passport.initialize());
-// This is inactive because it is not used in the current version which is setted up with passport-JWT
-app.use(passport.session());
+{
+  // This is inactive because it is not used in the current version which is setted up with passport-JWT
+  // app.use(
+  //   session({
+  //     secret: 'secret',
+  //     resave: false,
+  //     saveUninitialized: true,
+  //     cookie: {
+  //       maxAge: 1000 * 60 * 60
+  //     },
+  //     store: mongoStore.create({ mongoUrl: url })
+  //   })
+  // );
+}
 
-app.use(flash());
+app.use(passport.initialize());
+{
+  // This is inactive because it is not used in the current version which is setted up with passport-JWT
+  // app.use(passport.session());
+}
+app.use(getUserFromJWT);
+
+// app.use(flash());
 
 app.use('/auth', authRouter);
 app.use('/user', userRouter);

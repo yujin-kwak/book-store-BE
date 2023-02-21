@@ -10,8 +10,7 @@ router.post('/create', async (req, res, next) => {
 
   const { userDbId, userName, orderItemList, address, phone, totalPrice } = req.body;
   const status = 'pending';
-  console.log(orderItemList);
-
+  console.log('userDbId', userDbId);
   try {
     const savedOrder = await OrderService.createOrder({ orderId, userDbId, userName, address, phone, totalPrice, status });
     const savedOrderItem = await OrderService.createOrderItem(orderId, orderItemList);
@@ -44,6 +43,12 @@ router.get('/read/:id', async (req, res, next) => {
     res.status(404).json({ errorMessage: err });
     console.log(err);
   }
+});
+
+router.get('/readNomemberOrder/:orderId', async (req, res, next) => {
+  const { orderId } = req.params;
+  const result = await OrderService.readNomemberOrder(orderId);
+  res.status(200).json(result);
 });
 
 // it will update order only

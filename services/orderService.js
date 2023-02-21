@@ -59,6 +59,13 @@ class OrderService {
     return { result, orderItemList };
   }
 
+  static async readNomemberOrder(orderId) {
+    const orderList = await OrderModel.find({ orderId: orderId }).populate('userDbId');
+    const orderItemList = await OrderItemModel.find({ orderId: orderId }).populate('bookDbId');
+
+    return { orderList, orderItemList };
+  }
+
   static async updateOrder({ _id, orderId, userDbId, userName, address, phone, totalPrice, status }) {
     await OrderModel.updateOne({ _id: _id }, { orderId, userDbId, userName, address, phone, totalPrice, status });
   }

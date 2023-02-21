@@ -8,16 +8,27 @@ const asyncHandler = require('../utils/asyncHandler');
 router.post('/create', async (req, res, next) => {
   const orderId = 'order' + randomUUID().split('-')[0];
 
-  const { userDbId, orderItemList, address, phone, totalPrice } = req.body;
+  const { userDbId, userName, orderItemList, address, phone, totalPrice } = req.body;
   const status = 'pending';
   console.log(orderItemList);
 
   try {
-    const savedOrder = await OrderService.createOrder({ orderId, userDbId, address, phone, totalPrice, status });
+    const savedOrder = await OrderService.createOrder({ orderId, userDbId, userName, address, phone, totalPrice, status });
     const savedOrderItem = await OrderService.createOrderItem(orderId, orderItemList);
     res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
   } catch (err) {
     res.json({ errorMessage: err });
+    console.log(err);
+  }
+});
+
+router.get('/readAll', async (req, res, next) => {
+  try {
+    const result = await OrderService.readAllorder();
+    console.log('readAllresult', result);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(404).json({ errorMessage: err });
     console.log(err);
   }
 });
@@ -28,7 +39,7 @@ router.get('/read/:id', async (req, res, next) => {
 
   try {
     const result = await OrderService.readOrder(userDbId);
-    res.status(200).json(result);
+    res.status(200).json({ result: result });
   } catch (err) {
     res.status(404).json({ errorMessage: err });
     console.log(err);
@@ -37,10 +48,10 @@ router.get('/read/:id', async (req, res, next) => {
 
 // it will update order only
 router.put('/update', async (req, res, next) => {
-  const { _id, orderId, userDbId, address, phone, totalPrice, status } = req.body;
+  const { _id, orderId, userDbId, userName, address, phone, totalPrice, status } = req.body;
 
   try {
-    const result = await OrderService.updateOrder({ _id, orderId, userDbId, address, phone, totalPrice, status });
+    const result = await OrderService.updateOrder({ _id, orderId, userDbId, userName, address, phone, totalPrice, status });
     res.json({ message: 'completed', order: result });
   } catch (err) {
     res.json({ errorMessage: err });

@@ -5,10 +5,9 @@ const OrderSchema = new Schema(
   {
     id: Schema.Types.ObjectId,
     orderId: { type: String, required: true },
-    userId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
+    userDbId: { type: Schema.Types.ObjectId, ref: 'UserModel' },
     address: { type: String, required: true },
     phone: { type: String, required: true },
-    email: { type: String, required: true },
     totalPrice: { type: Number, required: true },
     status: { type: String, required: true }
   },

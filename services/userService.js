@@ -4,6 +4,10 @@ const hashPassword = require('../utils/hashPassword');
 
 class UserService {
   static async createUser({ name, userId, password, phone, address }) {
+    const result = await UserModel.find({ userId: userId });
+    console.log(result);
+    if (result.length > 0) throw new Error('User already exists');
+
     const hashedPassword = hashPassword(password);
     const user = new UserModel({
       name,
@@ -36,8 +40,9 @@ class UserService {
   }
 
   //authRotuer.js에서 사용
-  static async getUserByUserId(userId) {
+  static async getUserById(userId) {
     const result = await UserModel.findOne({ userId });
+    console.log('result', result);
     return result;
   }
 }

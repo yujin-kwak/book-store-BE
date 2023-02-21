@@ -7,13 +7,19 @@ const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
 const orderRouter = require('./routes/orderRoute');
 const testRouter = require('./routes/testRouter');
-const serializeUser = require('./utils/passport/index');
+// const serializeUser = require('./utils/passport/index');
+const serializeUser = require('./services/authService');
 const authRouter = require('./routes/authRoute');
 const mongoStore = require('connect-mongo'); // (node:10080) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead.
+
+const session = require('express-session');
+const passport = require('passport');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
 require('dotenv').config();
+
 const connect = process.env;
-console.log('connect', connect);
-const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=admin`;
+const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
 
 serializeUser();
 dbconnect();
@@ -21,11 +27,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const session = require('express-session');
-const passport = require('passport');
-const cookieParser = require('cookie-parser');
-const flash = require('connect-flash');
-
+// This is inactive because it is not used in the current version which is setted up with passport-JWT
+app.use(cookieParser());
 app.use(
   session({
     secret: 'secret',
@@ -38,8 +41,9 @@ app.use(
   })
 );
 app.use(passport.initialize());
+// This is inactive because it is not used in the current version which is setted up with passport-JWT
 app.use(passport.session());
-app.use(cookieParser());
+
 app.use(flash());
 
 app.use('/auth', authRouter);

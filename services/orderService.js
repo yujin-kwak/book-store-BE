@@ -4,13 +4,12 @@ const OrderItemModel = require('../models/schemas/orderItem');
 const BookModel = require('../models/schemas/book');
 
 class OrderService {
-  static async createOrder({ orderId, userId, address, phone, email, totalPrice, status }) {
+  static async createOrder({ orderId, userDbId, address, phone, totalPrice, status }) {
     const order = new OrderModel({
       orderId,
-      userId,
+      userDbId,
       address,
       phone,
-      email,
       totalPrice,
       status
     });
@@ -25,10 +24,10 @@ class OrderService {
       try {
         const orderItem = new OrderItemModel({
           orderId,
-          bookId: order.bookId,
+          bookDbId: order.bookDbId,
           bookTitle: order.title,
           quantity: order.quantity,
-          price: order.price
+          salePrice: order.salePrice
         });
 
         await orderItem.save();
@@ -39,35 +38,37 @@ class OrderService {
     });
   }
 
-  static async readOrder(userId) {
-    const result = await OrderModel.findOne({ userId: userId }).populate('userId');
+  static async readOrder(userDbId) {
+    const result = await OrderModel.findOne({ userDbId: userDbId }).populate('userDbId');
+    console.log('orderItem', result);
+    const orderItemList = await OrderItemModel.find({ orderId: result.orderId }).populate('bookDbId');
 
-    return result;
+    return { result, orderItemList };
   }
 
-  static async updateOrder({ _id, orderId, userId, orderItemList, address, phone, email, totalPrice }) {
-    await OrderModel.updateOne({ _id: _id }, { orderId, userId, orderItemList, address, phone, email, totalPrice });
+  static async updateOrder({ _id, orderId, userDbId, address, phone, totalPrice, status }) {
+    await OrderModel.updateOne({ _id: _id }, { orderId, userDbId, address, phone, totalPrice, status });
   }
 
   static async deleteOrder(orderId) {
-    await OrderModel.deleteOne({ _id: orderId });
+    await OrderModel.deleteOne({ orderId: orderId });
     await OrderItemModel.deleteMany({ orderId: orderId });
     return 'deleted';
   }
 
   static async readItem(orderId) {
-    const result = await OrderItemModel.find({ orderId: orderId }).populate('bookId');
+    const result = await OrderItemModel.find({ orderId: orderId }).populate('bookDbId');
 
     return result;
   }
 
-  static async updateItem(id) {
-    const orderItemModified = await OrderItemModel.updateOne({ _id: _id }, { $set: { orderId, bookId, bookTitle, quantity, price } });
+  static async updateItem({ _id, orderId, bookDbId, bookTitle, quantity, price }) {
+    const orderItemModified = await OrderItemModel.updateOne({ _id: _id }, { $set: { orderId, bookDbId, bookTitle, quantity, price } });
 
     return orderItemModified;
   }
-  static async deleteItem(orderId) {
-    await OrderItemModel.deleteMany({ orderId: orderId });
+  static async deleteItem(_id) {
+    await OrderItemModel.deleteOne({ _id: _id });
     return 'deleted';
   }
 }

@@ -13,7 +13,7 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-UserSchema.index({ name: 1 });
+UserSchema.index({ userId: 1 });
 
 const UserModel = mongoose.model('UserModel', UserSchema, 'users');
 module.exports = UserModel;

@@ -11,8 +11,8 @@ router.post(
     const { name, userId, password, phone, address } = req.body;
     if (!name || !userId || !password || !phone || !address) throw new Error('Missing required fields');
 
-    const user = await UserService.createUser({ name, userId, password, phone, address });
-    res.status(200).json(user);
+    const result = await UserService.createUser({ name, userId, password, phone, address });
+    res.status(200).json(result);
   })
 );
 

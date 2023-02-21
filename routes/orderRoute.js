@@ -4,16 +4,16 @@ const OrderService = require('../services/orderService');
 const { randomUUID } = require('crypto');
 const asyncHandler = require('../utils/asyncHandler');
 
+// it will create order and orderItem
 router.post('/create', async (req, res, next) => {
   const orderId = 'order' + randomUUID().split('-')[0];
 
-  const { userId, orderItemList, address, phone, email, totalPrice } = req.body;
+  const { userDbId, orderItemList, address, phone, totalPrice } = req.body;
   const status = 'pending';
   console.log(orderItemList);
 
   try {
-    const savedOrder = await OrderService.createOrder({ orderId, userId, address, phone, email, totalPrice, status });
-
+    const savedOrder = await OrderService.createOrder({ orderId, userDbId, address, phone, totalPrice, status });
     const savedOrderItem = await OrderService.createOrderItem(orderId, orderItemList);
     res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
   } catch (err) {
@@ -22,11 +22,12 @@ router.post('/create', async (req, res, next) => {
   }
 });
 
+// it will bring order and orderItem
 router.get('/read/:id', async (req, res, next) => {
-  const { id: userId } = req.params;
+  const { id: userDbId } = req.params;
 
   try {
-    const result = await OrderService.readOrder(userId);
+    const result = await OrderService.readOrder(userDbId);
     res.status(200).json(result);
   } catch (err) {
     res.status(404).json({ errorMessage: err });
@@ -34,11 +35,12 @@ router.get('/read/:id', async (req, res, next) => {
   }
 });
 
+// it will update order only
 router.put('/update', async (req, res, next) => {
-  const { _id, orderId, userId, orderItemList, address, phone, email, totalPrice } = req.body;
+  const { _id, orderId, userDbId, address, phone, totalPrice, status } = req.body;
 
   try {
-    const result = await OrderService.updateOrder({ _id, orderId, userId, orderItemList, address, phone, email, totalPrice });
+    const result = await OrderService.updateOrder({ _id, orderId, userDbId, address, phone, totalPrice, status });
     res.json({ message: 'completed', order: result });
   } catch (err) {
     res.json({ errorMessage: err });
@@ -46,12 +48,12 @@ router.put('/update', async (req, res, next) => {
   }
 });
 
+// it will delete order and orderItem
 router.delete('/delete/:id', async (req, res, next) => {
   const { id: orderId } = req.params;
 
   try {
-    await OrderService.deleteOrder(orderId);
-    const result = await OrderService.deleteOrderItem(orderId);
+    const result = await OrderService.deleteOrder(orderId);
 
     res.status(200).json(result);
   } catch (err) {
@@ -60,6 +62,7 @@ router.delete('/delete/:id', async (req, res, next) => {
   }
 });
 
+// it will bring orderItem only
 router.get(
   '/readItem/:orderId',
   asyncHandler(async (req, res) => {
@@ -69,20 +72,23 @@ router.get(
   })
 );
 
+// it will update orderItem only
 router.put(
-  '/updateItem/:id',
+  '/updateItem',
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const result = await OrderService.updateItem(id);
+    console.log(req.body);
+    const { _id, orderId, bookDbId, bookTitle, quantity, salePrice } = req.body;
+    const result = await OrderService.updateItem({ _id, orderId, bookDbId, bookTitle, quantity, salePrice });
     res.status(200).json({ message: 'completed', order: result });
   })
 );
 
+//it will delete orderItem only
 router.delete(
   '/deleteItem/:id',
   asyncHandler(async (req, res) => {
-    const { orderId } = req.params;
-    const result = await OrderService.deleteItem(orderId);
+    const { _id } = req.params;
+    const result = await OrderService.deleteItem(_id);
     res.status(200).json({ message: 'deleted', order: result });
   })
 );

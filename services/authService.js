@@ -8,17 +8,18 @@ require('dotenv').config();
 const env = process.env;
 
 const config = {
-  usernameField: 'userId',
+  usernameField: 'email',
   passwordField: 'password'
 };
 
-const local = new LocalStrategy(config, async (userId, password, done) => {
+const local = new LocalStrategy(config, async (email, password, done) => {
   try {
-    const user = await UserService.getUserById(userId);
+    console.log('email', email);
+    const user = await UserService.getUserById(email);
     if (!user) return done(null, false, { message: 'Incorrect Id' });
     const hashedPassword = hashPassword(password);
     if (hashedPassword !== user.password) return done(null, false, { message: 'Incorrect password' });
-    return done(null, { userId: user.userId, id: user._id, name: user.name });
+    return done(null, { email: user.email, id: user._id, name: user.name });
   } catch (err) {
     return done(err);
   }
@@ -55,7 +56,7 @@ const opts = {
 
 // const jwt = new JwtStrategy(opts, async (payload, done) => {
 //   try {
-//     const user = await UserService.getUserById(payload.userId);
+//     const user = await UserService.getUserById(payload.email);
 //     if (!user) return done(null, false);
 //     return done(null, user);
 //   } catch (err) {

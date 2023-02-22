@@ -17,6 +17,7 @@ const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
+const pageRouter = require('./routes/pageRoute');
 require('dotenv').config();
 
 const connect = process.env;
@@ -26,7 +27,7 @@ serializeUser();
 dbconnect();
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 {
@@ -49,15 +50,16 @@ app.use(passport.initialize());
   // This is inactive because it is not used in the current version which is setted up with passport-JWT
   // app.use(passport.session());
 }
-app.use(getUserFromJWT);
 
-// app.use(flash());
-
+app.use(flash());
+// app.use(getUserFromJWT);
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/book', bookRouter);
+
 app.use('/order', orderRouter);
 app.use('/test', testRouter);
+app.use('/page', pageRouter);
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);

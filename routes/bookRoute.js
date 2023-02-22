@@ -6,28 +6,105 @@ const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
 const multer = require('multer');
 const { route } = require('./orderRoute');
-const upload = multer({ dest: './imgStorage' });
+const apiUrl = 'http://elice.iptime.org:8080/';
+const path = require('path');
+const fs = require('fs');
 
-router.post(
-  '/create',
-  upload.single(),
-  asyncHandler(async (req, res) => {
-    const { title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'bookImages/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + file.originalname);
+  }
+});
 
-    console.log('req.fidddle', req.body);
+const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
+
+// router.post(
+//   '/create',
+//   upload.single('image'),
+//   asyncHandler(async (req, res) => {
+//     const { title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+//     const { file } = req.file;
+
+//     if (!title || !author || !category || !image || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
+
+//     const book = await BookService.createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
+
+//     res.json({ result: 'completed', book });
+//   })
+// );
+
+// router.post(
+//   '/create',
+//   upload.single('image'),
+//   asyncHandler(async (req, res) => {
+//     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+//     const { file } = req.file;
+//     console.log('file123', file);
+//     console.log('req.body', req.body);
+
+//     // const imageUrl = apiUrl + 'book/image/' + file.filename;
+//     // console.log('imageUrl', imageUrl);
+
+//     if (!title || !author || !category || !image || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
+
+//     const book = await BookService.createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
+
+//     res.json({ result: 'completed', book });
+//   })
+// );
+
+router.post('/create', upload.single('image'), (req, res, next) => {
+  try {
+    const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    const { file } = req.file;
+    console.log('file123', file);
+    console.log('req.body', req.body);
+
+    // const imageUrl = apiUrl + 'book/image/' + file.filename;
+    // console.log('imageUrl', imageUrl);
+
     if (!title || !author || !category || !image || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
 
-    const book = await BookService.createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
-    console.log(book);
+    const book = BookService.createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
+
     res.json({ result: 'completed', book });
-  })
-);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get('/image/:name', (req, res, next) => {
+  const { name } = req.params;
+  console.log('imageName', name);
+  const filePath = `${__dirname}/../bookImages/`;
+  console.log('filePath', filePath);
+  res.download(filePath + name, name, (err) => {
+    if (err) {
+      console.log('err', err);
+    } else {
+      console.log('success');
+    }
+  });
+});
 
 router.get(
   '/read',
   asyncHandler(async (req, res) => {
     const result = await BookService.readBook();
-    console.log(result);
+
+    res.json(result);
+  })
+);
+
+router.get(
+  '/read/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const result = await BookService.readBookById(id);
+
     res.json(result);
   })
 );
@@ -107,7 +184,7 @@ router.get(
   '/readBookByCategory/:category',
   asyncHandler(async (req, res) => {
     const { category } = req.params;
-    console.log(category);
+
     if (!category) throw new Error('Params(/:category) is missing');
     const result = await BookService.readBookByCategory(category);
     res.json(result);

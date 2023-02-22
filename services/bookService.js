@@ -71,6 +71,11 @@ class BookService {
 
     return result;
   }
+
+  static async countBooks() {
+    const result = await BookModel.countDocuments({});
+    return result;
+  }
 }
 
 module.exports = BookService;

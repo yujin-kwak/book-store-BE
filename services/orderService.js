@@ -51,6 +51,21 @@ class OrderService {
     return orderListAll;
   }
 
+  // static async readAllorder() {
+  //   const orderList = await OrderModel.find({}).populate('userDbId');
+  //   let orderListAll = [];
+  //   const orderItemlist = orderList.map(async (order) => {
+  //     await OrderItemModel.find({ orderId: order.orderId })
+  //       .populate('bookDbId')
+  //       .then((orderItemList) => {
+  //         orderListAll.push({ order, orderItemList });
+  //       });
+  //   });
+  //   await Promise.all(orderItemlist);
+  //   console.log('orderListAll', orderListAll);
+  //   return orderListAll;
+  // }
+
   static async readOrder(userDbId) {
     const result = await OrderModel.findOne({ userDbId: userDbId }).populate('userDbId');
     console.log('orderItem', result);

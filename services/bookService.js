@@ -3,12 +3,12 @@ const BookModel = require('../models/schemas/book');
 const BookCategoryModel = require('../models/schemas/bookCategory');
 
 class BookService {
-  static async createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher }) {
+  static async createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher }) {
     const book = new BookModel({
       title,
       author,
       category,
-      image,
+      imageUrl,
       price,
       salePrice,
       score,
@@ -27,12 +27,16 @@ class BookService {
 
   static async readBook() {
     const result = await BookModel.find({}).populate('category', 'category');
-
     return result;
   }
 
-  static async updateBook({ id, title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher }) {
-    const bookModified = await BookModel.updateOne({ _id: id }, { $set: { title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher } });
+  static async readBookById(id) {
+    const result = await BookModel.findById(id).populate('category', 'category');
+    return result;
+  }
+
+  static async updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher }) {
+    const bookModified = await BookModel.updateOne({ _id: id }, { $set: { title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher } });
 
     return bookModified;
   }

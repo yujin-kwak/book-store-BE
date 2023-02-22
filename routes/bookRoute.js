@@ -59,16 +59,17 @@ const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
 router.post('/create', upload.single('image'), (req, res, next) => {
   try {
     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
-    const { file } = req.file;
+    const file = req.file;
     console.log('file123', file);
     console.log('req.body', req.body);
 
-    // const imageUrl = apiUrl + 'book/image/' + file.filename;
-    // console.log('imageUrl', imageUrl);
+    const imageUrl = apiUrl + 'book/image/' + file.filename;
+    console.log('imageUrl', imageUrl);
 
-    if (!title || !author || !category || !image || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Contents is missing, check elemnts ');
+    if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
+      throw new Error('Contents is missing, check elemnts ');
 
-    const book = BookService.createBook({ title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    const book = BookService.createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
 
     res.json({ result: 'completed', book });
   } catch (err) {
@@ -121,10 +122,10 @@ router.put(
   '/update',
   upload.single(),
   asyncHandler(async (req, res) => {
-    const { id, title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    const { id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
     console.log(req.body);
-    if (!id || !title || !author || !category || !image || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
-    const book = await BookService.updateBook({ id, title, author, category, image, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    if (!id || !title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
+    const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
     res.json({ result: 'completed', book });
   })
 );

@@ -37,7 +37,7 @@ router.get('/', async (req, res, next) => {
 
 // it will bring order and orderItem
 
-router.get('/read', getUserFromJWT, async (req, res, next) => {
+router.get('/read', async (req, res, next) => {
   let command = req.query;
   console.log('command', Object.keys(command)[0]);
   console.log('command', command);

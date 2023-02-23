@@ -19,6 +19,7 @@ class BookService {
     });
     try {
       await book.save();
+
       return book;
     } catch (error) {
       console.log('BookService Create Error', error);

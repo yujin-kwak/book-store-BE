@@ -6,7 +6,7 @@ const dbconnect = require('./models/index');
 const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
 const orderRouter = require('./routes/orderRoute');
-const testRouter = require('./routes/testRouter');
+
 // const serializeUser = require('./utils/passport/index'); // this is for session way
 const serializeUser = require('./services/authService');
 const authRouter = require('./routes/authRoute');
@@ -77,7 +77,6 @@ app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/book', bookRouter);
 app.use('/order', orderRouter);
-app.use('/test', testRouter);
 
 app.use('/page', pageRouter);
 

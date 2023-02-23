@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-// const formidable = require('formidable');
 const BookService = require('../services/bookService');
 const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
@@ -21,19 +20,17 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
 
-router.post('/create', upload.single('image'), (req, res, next) => {
+router.post('/create', upload.single('file'), (req, res, next) => {
   try {
     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
-    console.log('req.body', req.body);
-    console.log('req.file', req);
     const image = req.file;
     const imageUrl = apiUrl + 'book/image/' + image.filename;
     if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
       throw new Error('Contents is missing, check elemnts ');
 
     const book = BookService.createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
-
-    res.json({ result: 'completed', book });
+    console.log(book);
+    res.json({ result: 'completed', book: book });
   } catch (err) {
     console.log(err);
   }
@@ -75,7 +72,7 @@ router.get(
 
 router.put(
   '/update',
-  upload.single(),
+  upload.single('file'),
   asyncHandler(async (req, res) => {
     const { id, title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
     console.log(req.body);
@@ -98,10 +95,9 @@ router.delete(
 );
 
 router.post(
-  '/createCategory/:category/:description',
+  '/createCategory/',
   asyncHandler(async (req, res) => {
-    console.log(req.params);
-    const { category, description } = req.params;
+    const { category, description } = req.query;
 
     if (!category) throw new Error('Params(/:category) is missing');
     const result = await BookService.createCategory(category, description);

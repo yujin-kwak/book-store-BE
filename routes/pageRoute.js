@@ -13,9 +13,6 @@ router.get(
     const [count, displayPage] = await Promise.all([BookService.countBook(), BookService.readBookPerPage(page, perPage)]);
     const total = Math.ceil(count / perPage);
     res.json({ total, displayPage });
-
-    // const total = await BookService.countBooks();
-    // const displayPage = await BookService.readBooks().sort({ createdAt: -1 }).skip((page - 1) * perPage).limit(perPage);
   })
 );
 

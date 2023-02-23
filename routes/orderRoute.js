@@ -6,18 +6,16 @@ const asyncHandler = require('../utils/asyncHandler');
 const getUserFromJWT = require('../middlewares/getUserFromJWT');
 
 // it will create order and orderItem
-router.post('/create', getUserFromJWT, async (req, res, next) => {
-  console.log('req.decodedbyJwt', req.decoded);
-  const orderId = 'order' + randomUUID().split('-')[0];
-  // userDBId should be removed!!!!!!
-  const { userDbId, userName, email, orderItemList, address, phone, totalPrice } = req.body;
+router.post('/', async (req, res, next) => {
+  const { userID, userName, email, orderItemList, address, phone, totalPrice } = req.body;
   const status = '주문확인중';
 
   try {
-    const savedOrder = await OrderService.createOrder({ orderId, userDbId, userName, email, address, phone, totalPrice, status });
-    const savedOrderItem = await OrderService.createOrderItem(orderId, orderItemList);
+    const savedOrder = await OrderService.createOrder({ userID, userName, email, address, phone, totalPrice, status });
+    const orderID = savedOrder._id;
+
+    const savedOrderItem = await OrderService.createOrderItem(orderID, orderItemList);
     res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
-    console.log('savedOrder', savedOrderItem);
   } catch (err) {
     res.json({ errorMessage: err });
     console.log(err);
@@ -37,13 +35,11 @@ router.get('/', async (req, res, next) => {
 
 // it will bring order and orderItem
 
-router.get('/read', async (req, res, next) => {
-  let command = req.query;
-  console.log('command', Object.keys(command)[0]);
-  console.log('command', command);
+router.get('/:orderID', async (req, res, next) => {
+  const { orderID } = req.params;
+
   try {
-    const result = await OrderService.readOrder(command);
-    console.log('read/id', result);
+    const result = await OrderService.readOrder(orderID);
     res.status(200).json({ result: result });
   } catch (err) {
     res.status(404).json({ errorMessage: err });
@@ -51,19 +47,20 @@ router.get('/read', async (req, res, next) => {
   }
 });
 
-router.get('/readNomemberOrder/:orderId', async (req, res, next) => {
-  const { orderId } = req.params;
+router.get('/noMemberOrder', async (req, res, next) => {
+  const { orderId } = req.query;
   const result = await OrderService.readNomemberOrder(orderId);
   res.status(200).json(result);
 });
 
 // it will update order only
-router.put('/update', async (req, res, next) => {
-  const { _id, orderId, userDbId, userName, email, address, phone, totalPrice, status } = req.body;
+router.put('/', async (req, res, next) => {
+  const { orderID: id } = req.query;
 
+  const { userID, userName, email, address, phone, totalPrice, status } = req.body;
   try {
-    const result = await OrderService.updateOrder({ _id, orderId, userDbId, userName, email, address, phone, totalPrice, status });
-    res.json({ message: 'completed', order: result });
+    const result = await OrderService.updateOrder({ id, userID, userName, email, address, phone, totalPrice, status });
+    res.json({ messsage: 'completed', order: result });
   } catch (err) {
     res.json({ errorMessage: err });
     console.log(err);
@@ -71,12 +68,10 @@ router.put('/update', async (req, res, next) => {
 });
 
 // it will delete order and orderItem
-router.delete('/delete/:id', async (req, res, next) => {
-  const { id: orderId } = req.params;
-
+router.delete('/', async (req, res, next) => {
+  const { orderID: id } = req.query;
   try {
-    const result = await OrderService.deleteOrder(orderId);
-
+    const result = await OrderService.deleteOrder(id);
     res.status(200).json(result);
   } catch (err) {
     res.status(404).json({ errorMessage: err });
@@ -85,33 +80,43 @@ router.delete('/delete/:id', async (req, res, next) => {
 });
 
 // it will bring orderItem only
+// router.get(
+//   '/items',
+//   asyncHandler(async (req, res) => {
+//     console.log('req.query: ', req.quer);
+//     const { orderID } = req.query;
+
+//     const result = await OrderService.readItem(orderID);
+//     res.status(200).json(result);
+//   })
+// );
+
 router.get(
-  '/readItem/:orderId',
-  getUserFromJWT,
+  '/items',
   asyncHandler(async (req, res) => {
-    const { orderId } = req.params;
-    const result = await OrderService.readItem(orderId);
+    const { orderID } = req.query;
+    const result = await OrderService.readItem(orderID);
     res.status(200).json(result);
   })
 );
 
 // it will update orderItem only
 router.put(
-  '/updateItem',
+  '/items',
   asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const { _id, orderId, bookDbId, bookTitle, quantity, salePrice } = req.body;
-    const result = await OrderService.updateItem({ _id, orderId, bookDbId, bookTitle, quantity, salePrice });
+    const { orderID } = req.params;
+    const { bookID, bookTitle, quantity, salePrice } = req.body;
+    const result = await OrderService.updateItem({ orderID, bookID, bookTitle, quantity, salePrice });
     res.status(200).json({ message: 'completed', order: result });
   })
 );
 
 //it will delete orderItem only
 router.delete(
-  '/deleteItem/:id',
+  '/items',
   asyncHandler(async (req, res) => {
-    const { _id } = req.params;
-    const result = await OrderService.deleteItem(_id);
+    const { orderID } = req.query;
+    const result = await OrderService.deleteItem(orderID);
     res.status(200).json({ message: 'deleted', order: result });
   })
 );

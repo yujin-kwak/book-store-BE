@@ -20,21 +20,31 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
 
-router.post('/create', upload.single('file'), (req, res, next) => {
+router.post('/', upload.single('file'), async (req, res, next) => {
   try {
     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
     const image = req.file;
-    const imageUrl = apiUrl + 'book/image/' + image.filename;
+    const imageUrl = apiUrl + 'books/image/' + image.filename;
     if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
       throw new Error('Contents is missing, check elemnts ');
 
-    const book = BookService.createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    const book = await BookService.createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
     console.log(book);
     res.json({ result: 'completed', book: book });
   } catch (err) {
     console.log(err);
   }
 });
+
+router.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    console.log('read', req.body);
+    const result = await BookService.readBook();
+
+    res.json(result);
+  })
+);
 
 router.get('/image/:name', (req, res, next) => {
   const { name } = req.params;
@@ -50,87 +60,29 @@ router.get('/image/:name', (req, res, next) => {
   });
 });
 
-router.get(
-  '/read',
-  asyncHandler(async (req, res) => {
-    console.log('read', req.body);
-    const result = await BookService.readBook();
-
-    res.json(result);
-  })
-);
-
-router.get(
-  '/read/:id',
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const result = await BookService.readBookById(id);
-
-    res.json(result);
-  })
-);
-
 router.put(
-  '/update',
+  '/',
   upload.single('file'),
   asyncHandler(async (req, res) => {
-    const { id, title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    const { bookID: id } = req.query;
+    const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
     console.log(req.body);
     const image = req.file;
-    const imageUrl = apiUrl + 'book/image/' + file.filename;
-    if (!id || !title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
+    console.log('image', image);
+    const imageUrl = apiUrl + 'book/image/' + image.filename;
+    if (!id || !title || !author || !category || !price || !imageUrl || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
     const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
     res.json({ result: 'completed', book });
   })
 );
 
 router.delete(
-  '/delete/:id',
+  '/',
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { bookID: id } = req.query;
     if (!id) throw new Error('Params(/:id) is missing');
     const result = await BookService.deleteBook(id);
     res.json({ result: `${id} is deleted` });
-  })
-);
-
-router.post(
-  '/createCategory/',
-  asyncHandler(async (req, res) => {
-    const { category, description } = req.query;
-
-    if (!category) throw new Error('Params(/:category) is missing');
-    const result = await BookService.createCategory(category, description);
-    res.json(result);
-  })
-);
-
-router.get(
-  '/readCategory',
-  asyncHandler(async (req, res) => {
-    const result = await BookService.readCategory();
-    res.json(result);
-  })
-);
-
-router.put(
-  '/updateCategory/:id/:category',
-  asyncHandler(async (req, res) => {
-    const { id, category } = req.params;
-    console.log(req.params);
-    if (!id || !category) throw new Error('Params(/:id/:category) is missing');
-    const result = await BookService.updateCategory(id, category);
-    res.json(result);
-  })
-);
-
-router.delete(
-  '/deleteCategory/:id',
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    if (!id) throw new Error('Params(/:id) is missing');
-    const result = await BookService.deleteBookByCategory(id);
-    res.status(200).json({ result: `${id} is deleted ${result}` });
   })
 );
 

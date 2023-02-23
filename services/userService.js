@@ -27,8 +27,8 @@ class UserService {
     return result;
   }
 
-  static async updateUser({ id, name, email, password, phone, address }) {
-    const userModified = await UserModel.updateOne({ _id: id }, { $set: { name, email, password, phone, address } });
+  static async updateUser({ id, name, password, phone, address }) {
+    const userModified = await UserModel.updateOne({ _id: id }, { $set: { name, password, phone, address } });
 
     return userModified;
   }

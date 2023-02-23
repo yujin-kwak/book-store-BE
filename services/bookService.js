@@ -19,7 +19,6 @@ class BookService {
     });
     try {
       await book.save();
-
       return book;
     } catch (error) {
       console.log('BookService Create Error', error);
@@ -75,7 +74,7 @@ class BookService {
   }
 
   static async readBookByCategory(category) {
-    const result = await BookModel.find({ category: category }).populate('category', 'category');
+    const result = await BookModel.find({ category: category }).populate('category', 'category').sort({ createdAt: -1 });
 
     return result;
   }

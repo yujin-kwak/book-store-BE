@@ -6,19 +6,16 @@ const dbconnect = require('./models/index');
 const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
 const orderRouter = require('./routes/orderRoute');
-
-// const serializeUser = require('./utils/passport/index'); // this is for session way
 const serializeUser = require('./services/authService');
 const authRouter = require('./routes/authRoute');
 const mongoStore = require('connect-mongo');
-// (node:10080) DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes instead. <---- this is the warning should be checked!!!
 const getUserFromJWT = require('./middlewares/getUserFromJWT');
 const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const pageRouter = require('./routes/pageRoute');
-const { SecurityHub } = require('aws-sdk');
+const categoryRouter = require('./routes/categoryRoute');
 require('dotenv').config();
 
 const connect = process.env;
@@ -26,58 +23,21 @@ const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${
 
 serializeUser();
 dbconnect();
-// app.use(cors({ origin: '*', credentials: true }));
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
-{
-  // This is inactive because it is not used in the current version which is setted up with passport-JWT
-  // app.use(
-  //   session({
-  //     secret: 'secret',
-  //     resave: false,
-  //     saveUninitialized: true,
-  //     cookie: {
-  //       maxAge: 1000 * 60 * 60
-  //     },
-  //     store: mongoStore.create({ mongoUrl: url })
-  //   })
-  // );
-}
 
 app.use(passport.initialize());
-{
-  // This is inactive because it is not used in the current version which is setted up with passport-JWT
-  // app.use(passport.session());
-}
-// app.setHeader('Access-Control-Allow-Credentials', 'true');
-// app.use(flash());
 
-// app.use((req, res, next) => {
-//   res.append('Access-Control-Allow-Origin', ['*']);
-//   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.append('Access-Control-Allow-Headers', 'Content-Type');
-//   res.append('Access-Control-Allow-Credentials', 'true');
-//   next();
-// });
-
-// app.use((req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//   res.setHeader('Access-Control-Allow-Credentials', 'true');
-//   res.setHeader('Set-Cookie', 'jwt=jwt_value;Path=/;Domain=domainvalue;Max-Age=seconds;HttpOnly');
-//   next();
-// });
-// app.use(getUserFromJWT);
 app.use('/auth', authRouter);
 
-app.use('/user', userRouter);
-app.use('/book', bookRouter);
-app.use('/order', orderRouter);
-
+app.use('/users', userRouter);
+app.use('/books', bookRouter);
+app.use('/orders', orderRouter);
+app.use('/categories', categoryRouter);
 app.use('/page', pageRouter);
 
 app.use(async (err, req, res, next) => {

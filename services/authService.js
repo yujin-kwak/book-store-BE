@@ -25,19 +25,6 @@ const local = new LocalStrategy(config, async (email, password, done) => {
   }
 });
 
-// const serializeUser = () => {
-//   // local strategy 사용
-//   passport.use(local);
-//   passport.serializeUser((user, callback) => {
-//     callback(null, user);
-//   });
-
-//   passport.deserializeUser((obj, callback) => {
-//     callback(null, obj);
-//   });
-// };
-
-// module.exports = serializeUser;
 
 const JwtStrategy = require('passport-jwt').Strategy; //jwt strategy
 
@@ -55,16 +42,6 @@ const opts = {
   secretOrKey: env.jwtSecret
 };
 
-// const jwt = new JwtStrategy(opts, async (payload, done) => {
-//   try {
-//     const user = await UserService.getUserById(payload.email);
-//     if (!user) return done(null, false);
-//     return done(null, user);
-//   } catch (err) {
-//     return done(err);
-//   }
-// }
-// );
 
 const jwt = new JwtStrategy(opts, (user, done) => {
   console.log('jwt-user', user);

@@ -1,58 +1,48 @@
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../models/schemas/user');
+const UserService = require('../services/userService');
+const asyncHandler = require('../utils/asyncHandler');
+const hashPassword = require('../utils/hashPassword');
+const passport = require('passport');
 
-router.post('/create', async (req, res, next) => {
-  const { name, email, password, phone, address, point } = req.body;
-  const post = new UserModel({
-    name,
-    email,
-    password,
-    phone,
-    address,
-    point
-  });
+router.post(
+  '/create',
+  asyncHandler(async (req, res) => {
+    const { name, email, password, phone, address } = req.body;
+    if (!name || !email || !password || !phone || !address) throw new Error('Missing required fields');
 
-  await post
-    .save()
-    .then(() => {
-      res.json({ result: 'completed' });
-    })
-    .catch((err) => {
-      res.json({ errorMessage: err });
-      console.log(err);
-    });
-});
+    const result = await UserService.createUser({ name, email, password, phone, address });
+    res.status(200).json(result);
+  })
+);
 
-router.get('/read', async (req, res, next) => {
-  const result = await UserModel.find({});
-  res.send(result);
-});
+router.get(
+  '/read',
+  asyncHandler(async (req, res) => {
+    const result = await UserService.readUser();
+    res.status(200).json(result);
+  })
+);
 
-router.put('/update', async (req, res, next) => {
-  const { id, name, email, password, phone, address, point } = req.body;
-  console.log(req.body);
-  await UserModel.updateOne({ _id: id }, { name, email, password, phone, address, point })
-    .then(() => {
-      res.json({ result: 'completed' });
-    })
-    .catch((err) => {
-      res.json({ errorMessage: err });
-      console.log(err);
-    });
-});
+router.put(
+  '/update',
+  asyncHandler(async (req, res) => {
+    const { id, name, email, password, phone, address } = req.body;
+    if (!id || !name || !email || !password || !phone || !address) throw new Error('Missing required fields');
 
-router.delete('/delete/:id', async (req, res, next) => {
-  const { id } = req.params;
+    const result = await UserService.updateUser({ id, name, email, password, phone, address });
+    res.status(200).json(result);
+  })
+);
 
-  await UserModel.deleteOne({ _id: id })
-    .then(() => {
-      res.json({ result: 'completed' });
-    })
-    .catch((err) => {
-      res.json({ errorMessage: err });
-      console.log(err);
-    });
-});
+router.delete(
+  '/delete/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) throw new Error('Missing required fields');
+    const result = await UserService.deleteUser(id);
+    res.status(200).json(result);
+  })
+);
 
 module.exports = router;

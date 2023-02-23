@@ -1,61 +1,162 @@
 const express = require('express');
 const router = express.Router();
-const formidable = require('formidable');
-const form = new formidable.IncomingForm();
+// const formidable = require('formidable');
 const BookService = require('../services/bookService');
 const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
+const multer = require('multer');
+const { route } = require('./orderRoute');
+const apiUrl = 'http://elice.iptime.org:8080/';
+const path = require('path');
+const fs = require('fs');
 
-router.post('/create', async (req, res, next) => {
-  form.parse(req, async (err, fields, files) => {
-    const { title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
-    try {
-      if (!title || !author || !category || !image || !price || !score || !quantity || !condition || !publishedDate || !publisher) {
-        throw new Error('Title is required');
-      }
-      const bookService = new BookService();
-      const book = await bookService.createBook({ title, author, category, image, price, score, quantity, condition, publishedDate, publisher });
-      res.json({ result: 'completed', book });
-    } catch (err) {
-      res.status(204).json({ result: err.message });
-      console.log(err);
-      next(err);
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'bookImages/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
+
+router.post('/create', upload.single('image'), (req, res, next) => {
+  try {
+    const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    console.log('req.body', req.body);
+    console.log('req.file', req);
+    const image = req.file;
+    const imageUrl = apiUrl + 'book/image/' + image.filename;
+    if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
+      throw new Error('Contents is missing, check elemnts ');
+
+    const book = BookService.createBook({ title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
+
+    res.json({ result: 'completed', book });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.get('/image/:name', (req, res, next) => {
+  const { name } = req.params;
+  console.log('imageName', name);
+  const filePath = `${__dirname}/../bookImages/`;
+  console.log('filePath', filePath);
+  res.download(filePath + name, name, (err) => {
+    if (err) {
+      console.log('err', err);
+    } else {
+      console.log('success');
     }
   });
 });
 
-router.get('/read', async (req, res, next) => {
-  const result = await BookModel.find({});
-  res.send(result);
-});
+router.get(
+  '/read',
+  asyncHandler(async (req, res) => {
+    console.log('read', req.body);
+    const result = await BookService.readBook();
 
-const formModified = new formidable.IncomingForm();
-router.put('/update', async (req, res, next) => {
-  formModified.parse(req, async (err, fields, files) => {
-    const { id, title, author, category, image, price, score, quantity, condition, publishedDate, publisher } = fields;
+    res.json(result);
+  })
+);
 
-    await BookModel.updateOne({ _id: id }, { title, author, category, image, price, score, quantity, condition, publishedDate, publisher })
-      .then(() => {
-        res.json({ result: 'completed' });
-      })
-      .catch((err) => {
-        res.json({ errorMessage: err });
-        console.log(err);
-      });
-  });
-});
+router.get(
+  '/read/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const result = await BookService.readBookById(id);
 
-router.delete('/delete/:id', async (req, res, next) => {
-  const { id } = req.params;
+    res.json(result);
+  })
+);
 
-  await BookModel.deleteOne({ _id: id })
-    .then(() => {
-      res.json({ result: 'completed' });
-    })
-    .catch((err) => {
-      res.json({ errorMessage: err });
-      console.log(err);
-    });
-});
+router.put(
+  '/update',
+  upload.single(),
+  asyncHandler(async (req, res) => {
+    const { id, title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    console.log(req.body);
+    const image = req.file;
+    const imageUrl = apiUrl + 'book/image/' + file.filename;
+    if (!id || !title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
+    const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    res.json({ result: 'completed', book });
+  })
+);
+
+router.delete(
+  '/delete/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) throw new Error('Params(/:id) is missing');
+    const result = await BookService.deleteBook(id);
+    res.json({ result: `${id} is deleted` });
+  })
+);
+
+router.post(
+  '/createCategory/:category/:description',
+  asyncHandler(async (req, res) => {
+    console.log(req.params);
+    const { category, description } = req.params;
+
+    if (!category) throw new Error('Params(/:category) is missing');
+    const result = await BookService.createCategory(category, description);
+    res.json(result);
+  })
+);
+
+router.get(
+  '/readCategory',
+  asyncHandler(async (req, res) => {
+    const result = await BookService.readCategory();
+    res.json(result);
+  })
+);
+
+router.put(
+  '/updateCategory/:id/:category',
+  asyncHandler(async (req, res) => {
+    const { id, category } = req.params;
+    console.log(req.params);
+    if (!id || !category) throw new Error('Params(/:id/:category) is missing');
+    const result = await BookService.updateCategory(id, category);
+    res.json(result);
+  })
+);
+
+router.delete(
+  '/deleteCategory/:id',
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    if (!id) throw new Error('Params(/:id) is missing');
+    const result = await BookService.deleteBookByCategory(id);
+    res.status(200).json({ result: `${id} is deleted ${result}` });
+  })
+);
+
+router.get(
+  '/readBookByCategory/:category',
+  asyncHandler(async (req, res) => {
+    const { category } = req.params;
+
+    if (!category) throw new Error('Params(/:category) is missing');
+    const result = await BookService.readBookByCategory(category);
+    res.json(result);
+  })
+);
+
+router.get(
+  '/readBookByAuthor/:author',
+  asyncHandler(async (req, res) => {
+    const { author } = req.params;
+    if (!author) throw new Error('Params(/:author) is missing');
+    const result = await BookService.readBookByAuthor(author);
+    res.json(result);
+  })
+);
 
 module.exports = router;

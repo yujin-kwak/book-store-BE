@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const connect = process.env;
 
-const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=admin`;
+const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
 
 mongoose.set('strictQuery', false);
 

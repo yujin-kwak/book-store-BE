@@ -3,11 +3,13 @@ const router = express.Router();
 const OrderService = require('../services/orderService');
 const { randomUUID } = require('crypto');
 const asyncHandler = require('../utils/asyncHandler');
+const getUserFromJWT = require('../middlewares/getUserFromJWT');
 
 // it will create order and orderItem
-router.post('/create', async (req, res, next) => {
+router.post('/create', getUserFromJWT, async (req, res, next) => {
+  console.log('req.decodedbyJwt', req.decoded);
   const orderId = 'order' + randomUUID().split('-')[0];
-
+  // userDBId should be removed!!!!!!
   const { userDbId, userName, email, orderItemList, address, phone, totalPrice } = req.body;
   const status = '주문확인중';
 
@@ -22,7 +24,7 @@ router.post('/create', async (req, res, next) => {
   }
 });
 
-router.get('/readAll', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
     const result = await OrderService.readAllorder();
 
@@ -35,7 +37,7 @@ router.get('/readAll', async (req, res, next) => {
 
 // it will bring order and orderItem
 
-router.get('/read', async (req, res, next) => {
+router.get('/read', getUserFromJWT, async (req, res, next) => {
   let command = req.query;
   console.log('command', Object.keys(command)[0]);
   console.log('command', command);
@@ -85,6 +87,7 @@ router.delete('/delete/:id', async (req, res, next) => {
 // it will bring orderItem only
 router.get(
   '/readItem/:orderId',
+  getUserFromJWT,
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
     const result = await OrderService.readItem(orderId);

@@ -19,7 +19,7 @@ const local = new LocalStrategy(config, async (email, password, done) => {
     if (!user) return done(null, false, { message: 'Incorrect Id' });
     const hashedPassword = hashPassword(password);
     if (hashedPassword !== user.password) return done(null, false, { message: 'Incorrect password' });
-    return done(null, { email: user.email, id: user._id, name: user.name });
+    return done(null, { id: user._id });
   } catch (err) {
     return done(err);
   }

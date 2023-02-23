@@ -7,7 +7,8 @@ const OrderSchema = new Schema(
     orderId: { type: String, required: true },
     userDbId: {
       type: Schema.Types.ObjectId,
-      ref: 'UserModel'
+      ref: 'UserModel',
+      required: false
     },
     userName: { type: String, required: true },
     email: { type: String, required: true },

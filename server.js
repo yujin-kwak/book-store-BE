@@ -63,16 +63,17 @@ app.use(passport.initialize());
 //   next();
 // });
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Set-Cookie', 'jwt=jwt_value;Path=/;Domain=domainvalue;Max-Age=seconds;HttpOnly');
-  next();
-});
-app.use(getUserFromJWT);
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+//   res.setHeader('Access-Control-Allow-Credentials', 'true');
+//   res.setHeader('Set-Cookie', 'jwt=jwt_value;Path=/;Domain=domainvalue;Max-Age=seconds;HttpOnly');
+//   next();
+// });
+// app.use(getUserFromJWT);
 app.use('/auth', authRouter);
+
 app.use('/user', userRouter);
 app.use('/book', bookRouter);
 app.use('/order', orderRouter);

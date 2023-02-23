@@ -8,13 +8,14 @@ const asyncHandler = require('../utils/asyncHandler');
 router.post('/create', async (req, res, next) => {
   const orderId = 'order' + randomUUID().split('-')[0];
 
-  const { userDbId, userName, orderItemList, address, phone, totalPrice } = req.body;
-  const status = 'pending';
-  console.log('userDbId', userDbId);
+  const { userDbId, userName, email, orderItemList, address, phone, totalPrice } = req.body;
+  const status = '주문확인중';
+
   try {
-    const savedOrder = await OrderService.createOrder({ orderId, userDbId, userName, address, phone, totalPrice, status });
+    const savedOrder = await OrderService.createOrder({ orderId, userDbId, userName, email, address, phone, totalPrice, status });
     const savedOrderItem = await OrderService.createOrderItem(orderId, orderItemList);
     res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
+    console.log('savedOrder', savedOrderItem);
   } catch (err) {
     res.json({ errorMessage: err });
     console.log(err);
@@ -24,7 +25,7 @@ router.post('/create', async (req, res, next) => {
 router.get('/readAll', async (req, res, next) => {
   try {
     const result = await OrderService.readAllorder();
-    console.log('readAllresult', result);
+
     res.status(200).json(result);
   } catch (err) {
     res.status(404).json({ errorMessage: err });
@@ -33,11 +34,14 @@ router.get('/readAll', async (req, res, next) => {
 });
 
 // it will bring order and orderItem
-router.get('/read/:id', async (req, res, next) => {
-  const { id: userDbId } = req.params;
 
+router.get('/read', async (req, res, next) => {
+  let command = req.query;
+  console.log('command', Object.keys(command)[0]);
+  console.log('command', command);
   try {
-    const result = await OrderService.readOrder(userDbId);
+    const result = await OrderService.readOrder(command);
+    console.log('read/id', result);
     res.status(200).json({ result: result });
   } catch (err) {
     res.status(404).json({ errorMessage: err });
@@ -53,10 +57,10 @@ router.get('/readNomemberOrder/:orderId', async (req, res, next) => {
 
 // it will update order only
 router.put('/update', async (req, res, next) => {
-  const { _id, orderId, userDbId, userName, address, phone, totalPrice, status } = req.body;
+  const { _id, orderId, userDbId, userName, email, address, phone, totalPrice, status } = req.body;
 
   try {
-    const result = await OrderService.updateOrder({ _id, orderId, userDbId, userName, address, phone, totalPrice, status });
+    const result = await OrderService.updateOrder({ _id, orderId, userDbId, userName, email, address, phone, totalPrice, status });
     res.json({ message: 'completed', order: result });
   } catch (err) {
     res.json({ errorMessage: err });

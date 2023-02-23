@@ -24,6 +24,8 @@ const upload = multer({ storage: storage, limits: { fileSize: 1000000 } });
 router.post('/create', upload.single('image'), (req, res, next) => {
   try {
     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
+    console.log('req.body', req.body);
+    console.log('req.file', req);
     const image = req.file;
     const imageUrl = apiUrl + 'book/image/' + image.filename;
     if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
@@ -54,6 +56,7 @@ router.get('/image/:name', (req, res, next) => {
 router.get(
   '/read',
   asyncHandler(async (req, res) => {
+    console.log('read', req.body);
     const result = await BookService.readBook();
 
     res.json(result);

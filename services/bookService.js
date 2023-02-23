@@ -26,8 +26,11 @@ class BookService {
   }
 
   static async readBook() {
-    const result = await BookModel.find({}).populate('category', 'category');
-    return result;
+    const array = await BookModel.find({}).populate('category', 'category');
+    // const arrayFrom = Array.from(array);
+    // console.log(arrayFrom);
+    // return arrayFrom;
+    return array;
   }
 
   static async readBookById(id) {
@@ -76,7 +79,18 @@ class BookService {
     return result;
   }
 
-  static async countBooks() {
+  static async readBookPerPage(page, perPage) {
+    const array = await BookModel.find({})
+      .populate('category', 'category')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+    // const arrayFrom = Array.from(array);
+    // console.log(arrayFrom);
+    // return arrayFrom;
+    return array;
+  }
+  static async countBook() {
     const result = await BookModel.countDocuments({});
     return result;
   }

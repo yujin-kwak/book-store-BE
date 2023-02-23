@@ -42,6 +42,7 @@ const local = new LocalStrategy(config, async (email, password, done) => {
 const JwtStrategy = require('passport-jwt').Strategy; //jwt strategy
 
 const cookieExtractor = (req) => {
+  console.log('cookieExtractor', req);
   let token = null;
   if (req && req.cookies) {
     token = req.cookies['access_token'];
@@ -66,6 +67,7 @@ const opts = {
 // );
 
 const jwt = new JwtStrategy(opts, (user, done) => {
+  console.log('jwt-user', user);
   return done(null, user);
 });
 
@@ -73,10 +75,12 @@ const serializeUser = () => {
   passport.use(local);
   passport.use(jwt);
   passport.serializeUser((user, callback) => {
+    console.log('serializeUser', user);
     callback(null, user);
   });
 
   passport.deserializeUser((obj, callback) => {
+    console.log('deserializeUser', obj);
     callback(null, obj);
   });
 };

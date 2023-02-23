@@ -42,7 +42,7 @@ class UserService {
   //authRotuer.js에서 사용
   static async getUserById(email) {
     const result = await UserModel.findOne({ email });
-    console.log('result', result);
+    console.log('getUserById_result', { result, Date: new Date() });
     return result;
   }
 }

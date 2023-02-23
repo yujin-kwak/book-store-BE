@@ -18,6 +18,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const pageRouter = require('./routes/pageRoute');
+const { SecurityHub } = require('aws-sdk');
 require('dotenv').config();
 
 const connect = process.env;
@@ -25,9 +26,10 @@ const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${
 
 serializeUser();
 dbconnect();
+// app.use(cors({ origin: '*', credentials: true }));
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
 {
@@ -50,26 +52,45 @@ app.use(passport.initialize());
   // This is inactive because it is not used in the current version which is setted up with passport-JWT
   // app.use(passport.session());
 }
+// app.setHeader('Access-Control-Allow-Credentials', 'true');
+// app.use(flash());
 
-app.use(flash());
-// app.use(getUserFromJWT);
+// app.use((req, res, next) => {
+//   res.append('Access-Control-Allow-Origin', ['*']);
+//   res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.append('Access-Control-Allow-Headers', 'Content-Type');
+//   res.append('Access-Control-Allow-Credentials', 'true');
+//   next();
+// });
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Set-Cookie', 'jwt=jwt_value;Path=/;Domain=domainvalue;Max-Age=seconds;HttpOnly');
+  next();
+});
+app.use(getUserFromJWT);
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/book', bookRouter);
-
 app.use('/order', orderRouter);
 app.use('/test', testRouter);
+
 app.use('/page', pageRouter);
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);
   res.status(200).json({ Error: err.message });
 });
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
+
 app.get('*', (req, res) => {
-  res.status(400).send("Sorry can't find ddthat!");
+  res.status(400).send('hello!this is not a valid route');
 });
 
 app.listen(port, () => {

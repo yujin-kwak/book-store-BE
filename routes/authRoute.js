@@ -14,7 +14,8 @@ const generateJWT = require('../utils/generateJWT');
 // this is the route for jwt way    session() should be inactive
 router.post('/', passport.authenticate('local', { session: false }), (req, res) => {
   generateJWT(res, req.user);
-  res.status(200).json(req.user);
+  // res.status(200).json(req.user);
+  // console.log('ress', res._header.Set - Cookie);
 });
 
 module.exports = router;

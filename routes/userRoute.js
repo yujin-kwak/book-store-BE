@@ -5,6 +5,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const hashPassword = require('../utils/hashPassword');
 const passport = require('passport');
 const OrderService = require('../services/orderService');
+const getUserFromJWT = require('../middlewares/getUserFromJWT');
 router.post(
   '/',
   asyncHandler(async (req, res) => {

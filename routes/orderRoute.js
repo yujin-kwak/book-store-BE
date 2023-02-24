@@ -6,7 +6,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const getUserFromJWT = require('../middlewares/getUserFromJWT');
 
 // it will create order and orderItem
-router.post('/', async (req, res, next) => {
+router.post('/', getUserFromJWT, async (req, res, next) => {
   const { userID, userName, email, orderItemList, address, phone, totalPrice } = req.body;
   const status = '주문확인중';
 
@@ -53,6 +53,7 @@ router.get('/noMemberOrder', async (req, res, next) => {
   res.status(200).json(result);
 });
 
+// ********** 2021-08-04  order result return xx **********
 // it will update order only
 router.put('/', async (req, res, next) => {
   const { orderID: id } = req.query;

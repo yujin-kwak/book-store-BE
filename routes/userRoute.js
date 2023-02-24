@@ -48,6 +48,7 @@ router.delete(
 
 router.get(
   '/orders',
+  getUserFromJWT,
   asyncHandler(async (req, res) => {
     const { userID: id } = req.query;
     if (!id) throw new Error('Missing required fields');

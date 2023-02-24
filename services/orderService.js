@@ -88,7 +88,7 @@ class OrderService {
   }
 
   static async deleteOrder(id) {
-    await OrderModel.deleteOne({ orderID: id });
+    await OrderModel.deleteOne({ _id: id });
     await OrderItemModel.deleteMany({ orderID: id });
     return 'deleted';
   }

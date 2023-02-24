@@ -14,7 +14,7 @@ const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
-const pageRouter = require('./routes/pageRoute');
+
 const categoryRouter = require('./routes/categoryRoute');
 require('dotenv').config();
 
@@ -38,7 +38,6 @@ app.use('/users', userRouter);
 app.use('/books', bookRouter);
 app.use('/orders', orderRouter);
 app.use('/categories', categoryRouter);
-app.use('/page', pageRouter);
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);

@@ -94,7 +94,7 @@ class OrderService {
   }
 
   static async readItem(orderID) {
-    const result = await OrderItemModel.findOne({ orderID });
+    const result = await OrderItemModel.find({ orderID: orderID });
     return result;
   }
 

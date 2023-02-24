@@ -92,7 +92,7 @@ router.delete('/', async (req, res, next) => {
 // );
 
 router.get(
-  '/items',
+  '/item',
   asyncHandler(async (req, res) => {
     const { orderID } = req.query;
     const result = await OrderService.readItem(orderID);

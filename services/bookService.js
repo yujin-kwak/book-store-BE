@@ -79,7 +79,7 @@ class BookService {
     return result;
   }
 
-  static async readBookPerPage(page, perPage) {
+  static async readBookPerPage(page, perPage, category) {
     const array = await BookModel.find({})
       .populate('category', 'category')
       .sort({ createdAt: -1 })

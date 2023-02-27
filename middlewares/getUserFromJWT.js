@@ -13,9 +13,10 @@ const getUserFromJWT = (req, res, next) => {
     console.log('decoded', decoded);
     req.decoded = decoded;
     next();
-  } catch (erre) {
+  } catch (err) {
     res.status(401).json({
-      message: 'Auth failed'
+      message: 'Auth failed',
+      error: err
     });
     return;
   }

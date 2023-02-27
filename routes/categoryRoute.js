@@ -19,8 +19,14 @@ router.post(
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    const result = await BookService.readCategory();
-    res.json(result);
+    const { id } = req.query;
+    if (!id) {
+      const result = await BookService.readCategory();
+      res.json(result);
+    } else {
+      const result = await BookService.readCategoryById(id);
+      res.json(result);
+    }
   })
 );
 
@@ -31,7 +37,7 @@ router.put(
     const { category, description } = req.body;
     console.log(req.params);
     if (!id || !category) throw new Error('Params(/:id/:category) is missing');
-    const result = await BookService.updateCategory(id, category);
+    const result = await BookService.updateCategory(id, category,description);
     res.json({ result: result });
   })
 );

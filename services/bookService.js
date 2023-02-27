@@ -26,7 +26,7 @@ class BookService {
   }
 
   static async readBook() {
-    const array = await BookModel.find({}).populate('category', 'category');
+    const array = await BookModel.find({}).populate('category', 'category').sort({ createdAt: -1 });
     // const arrayFrom = Array.from(array);
     // console.log(arrayFrom);
     // return arrayFrom;
@@ -61,6 +61,11 @@ class BookService {
     return result;
   }
 
+  static async readCategoryById(id) {
+    const result = await BookCategoryModel.findById(id);
+    return result;
+  }
+
   static async updateCategory(id, category) {
     const bookCategoryModified = await BookCategoryModel.updateOne({ _id: id }, { $set: { category: category } });
 
@@ -73,10 +78,24 @@ class BookService {
     return result;
   }
 
-  static async readBookByCategory(category) {
-    const result = await BookModel.find({ category: category }).populate('category', 'category').sort({ createdAt: -1 });
+  static async readBookByCategory(category, sort) {
+    switch (sort) {
+      case 'price':
+        const price = await BookModel.find({ category: category }).sort({ price: 1 }).populate('category', 'category');
+        return price;
+        break;
 
-    return result;
+      case 'score':
+        const score = await BookModel.find({ category: category }).sort({ score: -1 }).populate('category', 'category');
+        return score;
+        break;
+
+      case 'createdAt':
+        const createdAt = await BookModel.find({ category: category }).sort({ createdAt: -1 }).populate('category', 'category');
+        return createdAt;
+        break;
+      default:
+    }
   }
 
   static async readBookPerPage(page, perPage, category) {

@@ -85,7 +85,7 @@ class BookService {
   }
 
   static async readBookPerPage(page, perPage, category) {
-    const array = await BookModel.find({})
+    const array = await BookModel.find({ category: category })
       .populate('category', 'category')
       .sort({ createdAt: -1 })
       .skip((page - 1) * perPage)
@@ -95,6 +95,12 @@ class BookService {
     // return arrayFrom;
     return array;
   }
+
+  static async countBookByCategory(category) {
+    const result = await BookModel.countDocuments({ category: category });
+    return result;
+  }
+
   static async countBook() {
     const result = await BookModel.countDocuments({});
     return result;

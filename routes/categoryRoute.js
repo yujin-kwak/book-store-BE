@@ -19,8 +19,14 @@ router.post(
 router.get(
   '/',
   asyncHandler(async (req, res) => {
-    const result = await BookService.readCategory();
-    res.json(result);
+    const { id } = req.query;
+    if (!id) {
+      const result = await BookService.readCategory();
+      res.json(result);
+    } else {
+      const result = await BookService.readCategoryById(id);
+      res.json(result);
+    }
   })
 );
 

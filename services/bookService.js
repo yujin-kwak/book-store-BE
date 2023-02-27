@@ -61,6 +61,11 @@ class BookService {
     return result;
   }
 
+  static async readCategoryById(id) {
+    const result = await BookCategoryModel.findById(id);
+    return result;
+  }
+
   static async updateCategory(id, category) {
     const bookCategoryModified = await BookCategoryModel.updateOne({ _id: id }, { $set: { category: category } });
 

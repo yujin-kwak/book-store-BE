@@ -24,6 +24,7 @@ router.post('/', upload.single('file'), async (req, res, next) => {
   try {
     const { title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher } = req.body;
     const image = req.file;
+    // formdata로 받은 image를 file로 저장
     const imageUrl = apiUrl + 'books/image/' + image.filename;
     if (!title || !author || !category || !imageUrl || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher)
       throw new Error('Contents is missing, check elemnts ');
@@ -87,7 +88,7 @@ router.delete(
 );
 
 router.get(
-  '/readBookByCategory/:category',
+  '/:category',
   asyncHandler(async (req, res) => {
     const { category } = req.params;
 
@@ -98,11 +99,22 @@ router.get(
 );
 
 router.get(
-  '/readBookByAuthor/:author',
+  '/:author',
   asyncHandler(async (req, res) => {
     const { author } = req.params;
     if (!author) throw new Error('Params(/:author) is missing');
     const result = await BookService.readBookByAuthor(author);
+    res.json(result);
+  })
+);
+
+router.get(
+  '/:category/:sort',
+  asyncHandler(async (req, res) => {
+    const { category, sort } = req.params;
+    console.log('category', category, sort);
+    if (!category || !sort) throw new Error('Params(/:category/:score) is missing');
+    const result = await BookService.readBookByCategory(category, sort);
     res.json(result);
   })
 );

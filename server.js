@@ -26,7 +26,7 @@ const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${
 serializeUser();
 dbconnect();
 
-app.use(cors({ origin: '*' }));
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -34,13 +34,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(passport.initialize());
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
 
 app.use('/auth', authRouter);
 app.use('/users', userRouter);

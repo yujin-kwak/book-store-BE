@@ -73,7 +73,7 @@ router.put(
     const imageUrl = apiUrl + 'book/image/' + image.filename;
     if (!id || !title || !author || !category || !price || !imageUrl || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
     const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
-    res.json({ result: 'completed', book });
+    res.json({ result: 'completed', book: book });
   })
 );
 

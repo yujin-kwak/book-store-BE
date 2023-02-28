@@ -18,13 +18,16 @@ const flash = require('connect-flash');
 const categoryRouter = require('./routes/categoryRoute');
 require('dotenv').config();
 
+console.log(process.env.PORT);
+
 const connect = process.env;
 const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
 
 serializeUser();
 dbconnect();
 
-app.use(cors());
+app.use(cors({ origin: '*', credentials: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -33,7 +36,6 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use('/auth', authRouter);
-
 app.use('/users', userRouter);
 app.use('/books', bookRouter);
 app.use('/orders', orderRouter);

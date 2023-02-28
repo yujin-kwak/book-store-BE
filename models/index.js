@@ -3,7 +3,9 @@ require('dotenv').config();
 
 const connect = process.env;
 
-const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
+// const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
+
+const url = 'mongodb://bookadmin:admin12345@elice.iptime.org:27017/bookstore?authMechanism=DEFAULT&authSource=admin';
 
 mongoose.set('strictQuery', false);
 

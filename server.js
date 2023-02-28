@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const port = process.env.PORT || 5500;
+
 const dbconnect = require('./models/index');
 const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
@@ -19,7 +19,7 @@ const categoryRouter = require('./routes/categoryRoute');
 require('dotenv').config();
 
 console.log(process.env.PORT);
-
+const port = process.env.PORT || 5500;
 const connect = process.env;
 const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
 

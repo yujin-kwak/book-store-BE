@@ -90,12 +90,14 @@ router.delete(
 router.get(
   '/readBookByCategory/',
   asyncHandler(async (req, res) => {
-    const { category, page, perPage } = req.query;
+    const { category, page, perPage, sortedBy } = req.query;
 
     if (!category) throw new Error('Params category is missing');
     if (!page) throw new Error('Params page is missing');
     if (!perPage) throw new Error('Params perPage is missing');
-    const result = await BookService.readBookPerPage(page, perPage, category);
+    if (!sortedBy) throw new Error('Params perPage is missing');
+    console.log(sortedBy);
+    const result = await BookService.readBookPerPage(page, perPage, category, sortedBy);
 
     res.json(result);
   })

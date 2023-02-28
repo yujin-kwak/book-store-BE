@@ -70,9 +70,12 @@ router.put(
     console.log(req.body);
     const image = req.file;
     console.log('image', image);
-    const imageUrl = apiUrl + 'book/image/' + image.filename;
-    if (!id || !title || !author || !category || !price || !imageUrl || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
-    const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    if (image) {
+      const imageUrl = apiUrl + 'book/image/' + image.filename;
+      const book = await BookService.updateBook({ id, title, author, category, imageUrl, price, salePrice, score, quantity, condition, publishedDate, publisher });
+    }
+    // if (!id || !title || !author || !category || !price || !salePrice || !score || !quantity || !condition || !publishedDate || !publisher) throw new Error('Content is missing');
+    const book = await BookService.updateBook({ id, title, author, category, price, salePrice, score, quantity, condition, publishedDate, publisher });
     res.json({ result: 'completed', book: book });
   })
 );

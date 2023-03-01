@@ -25,6 +25,21 @@ router.post('/', getUserFromJWT, async (req, res, next) => {
   }
 });
 
+router.post('/noMemberOrder', async (req, res, next) => {
+  const { userID, userName, email, orderItemList, address, phone, totalPrice } = req.body;
+  const status = '주문확인중';
+
+  try {
+    const savedOrder = await OrderService.createOrder({ userID, userName, email, address, phone, totalPrice, status });
+    const orderID = savedOrder._id;
+    const savedOrderItem = await OrderService.createOrderItem(orderID, orderItemList);
+    res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
+  } catch (err) {
+    res.json({ errorMessage: err });
+    console.log(err);
+  }
+});
+
 router.get('/', getUserFromJWT, async (req, res, next) => {
   try {
     console.log('req.decoded', req.decoded);

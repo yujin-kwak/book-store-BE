@@ -41,6 +41,19 @@ class UserService {
     return userModified;
   }
 
+  static async updateUserPassword({ userID, currentPassword, newPassword }) {
+    console.log('phone', userID);
+    const hashedCurrentPassword = hashPassword(currentPassword);
+    console.group('hashedPassword', hashedCurrentPassword);
+    const user = await UserModel.find({ _id: userID });
+
+    if (user[0].password !== hashedCurrentPassword) throw new Error('Your password is incorrect');
+    const hashedNewPassword = hashPassword(newPassword);
+    const userModified = await UserModel.updateOne({ _id: userID }, { password: hashedNewPassword });
+    console.log(userModified);
+    return userModified;
+  }
+
   static async deleteUser(id) {
     const result = await UserModel.deleteOne({ _id: id });
     console.log(result);

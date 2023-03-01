@@ -8,7 +8,7 @@ const OrderItemSchema = new Schema(
     orderID: { type: Schema.Types.ObjectId, ref: OrderModel, required: true },
     bookID: { type: Schema.Types.ObjectId, ref: 'BookModel' },
     bookTitle: { type: String, required: true },
-    quantity: { type: Number, required: true },
+    quantity: { type: Number, required: true, default: 1 },
     salePrice: { type: Number, required: true }
   },
   { timestamps: true }

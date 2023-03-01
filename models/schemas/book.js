@@ -12,7 +12,7 @@ const BookSchema = new Schema(
     price: { type: Number, required: true },
     salePrice: { type: Number, required: true },
     score: { type: Number, default: 0, max: 100, min: 0, index: true },
-    quantity: { type: Number, default: 0 },
+    stock: { type: Number, default: 0 },
     condition: { type: String, required: true },
     publishedDate: { type: String, required: true },
     publisher: { type: String, required: true }

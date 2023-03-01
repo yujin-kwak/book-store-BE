@@ -86,9 +86,25 @@ router.put(
     console.log('req.decoded', req.decoded);
     const { id, role } = req.decoded;
     if (!id) throw new Error('Missing required fields or you are not user approved');
-    const { name, password, phone, address } = req.body;
-    if (!id || !name || !password || !phone || !address) throw new Error('Missing required fields');
-    const result = await UserService.updateUser({ userID: id, name, password, phone, address, role });
+    const { name, email, password, phone, address } = req.body;
+    console.log(req.body);
+    if (!id || !name || !phone || !address) throw new Error('Missing required fields!!!');
+    const result = await UserService.updateUser({ userID: id, name, email, password, phone, address, role });
+    res.status(200).json(result);
+  })
+);
+
+router.put(
+  '/mydetail/password',
+  getUserFromJWT,
+  asyncHandler(async (req, res) => {
+    console.log('req.decoded', req.decoded);
+    const { id: userID, role } = req.decoded;
+    if (!userID) throw new Error('Missing required fields or you are not user approved');
+    const { currentPassword, newPassword } = req.body;
+    console.log('fda.xljvlxcvj', req.body);
+    if (!currentPassword || !newPassword) throw new Error('Missing required fields!!!');
+    const result = await UserService.updateUserPassword({ userID, currentPassword, newPassword });
     res.status(200).json(result);
   })
 );
@@ -113,9 +129,9 @@ router.get(
     console.log('req.decoded on users/orders', req.decoded);
     const { id: userID, role } = req.decoded;
 
-    if (!id) throw new Error('Missing required fields or you are not user approved');
+    if (!userID) throw new Error('Missing required fields or you are not user approved');
 
-    if (!id) throw new Error('Missing required fields');
+    if (!userID) throw new Error('Missing required fields');
 
     const result = await OrderService.readOrderByUser(userID);
     console.log('result', result);

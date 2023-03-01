@@ -13,7 +13,6 @@ router.post('/', getUserFromJWT, async (req, res, next) => {
   try {
     const savedOrder = await OrderService.createOrder({ userID, userName, email, address, phone, totalPrice, status });
     const orderID = savedOrder._id;
-
     const savedOrderItem = await OrderService.createOrderItem(orderID, orderItemList);
     res.json({ message: 'completed', order: savedOrder, orderItem: savedOrderItem });
   } catch (err) {
@@ -25,7 +24,6 @@ router.post('/', getUserFromJWT, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const result = await OrderService.readAllorder();
-
     res.status(200).json(result);
   } catch (err) {
     res.status(404).json({ errorMessage: err });

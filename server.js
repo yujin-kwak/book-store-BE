@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const port = process.env.PORT || 8080;
+
 const dbconnect = require('./models/index');
 const userRouter = require('./routes/userRoute');
 const bookRouter = require('./routes/bookRoute');
@@ -18,6 +18,8 @@ const flash = require('connect-flash');
 const categoryRouter = require('./routes/categoryRoute');
 require('dotenv').config();
 
+console.log(process.env.PORT);
+const port = process.env.PORT || 5500;
 const connect = process.env;
 const url = `mongodb://${connect.username}:${connect.password}@${connect.url}/${connect.dbname}?authSource=${connect.authSource}`;
 
@@ -25,6 +27,7 @@ serializeUser();
 dbconnect();
 
 app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -33,7 +36,6 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use('/auth', authRouter);
-
 app.use('/users', userRouter);
 app.use('/books', bookRouter);
 app.use('/orders', orderRouter);

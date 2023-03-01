@@ -98,10 +98,19 @@ class BookService {
     }
   }
 
-  static async readBookPerPage(page, perPage, category) {
-    const array = await BookModel.find({})
+  static async readBookPerPage(page, perPage, category, sortedBy) {
+    let currentSort = { createdAt: -1 };
+    if (sortedBy == 1) {
+      currentSort = { score: -1 };
+    } else if (sortedBy == 2) {
+      currentSort = { salePrice: 1 };
+    } else if (sortedBy == 3) {
+      currentSort = { salePrice: -1 };
+    }
+
+    const array = await BookModel.find({ category: category })
       .populate('category', 'category')
-      .sort({ createdAt: -1 })
+      .sort(currentSort)
       .skip((page - 1) * perPage)
       .limit(perPage);
     // const arrayFrom = Array.from(array);
@@ -109,6 +118,12 @@ class BookService {
     // return arrayFrom;
     return array;
   }
+
+  static async countBookByCategory(category) {
+    const result = await BookModel.countDocuments({ category: category });
+    return result;
+  }
+
   static async countBook() {
     const result = await BookModel.countDocuments({});
     return result;

@@ -8,6 +8,7 @@ const { route } = require('./orderRoute');
 const apiUrl = 'http://elice.iptime.org:8080/';
 const path = require('path');
 const fs = require('fs');
+const { stringify } = require('querystring');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -91,13 +92,29 @@ router.delete(
 );
 
 router.get(
-  '/:category',
+  '/readBookByCategory/',
   asyncHandler(async (req, res) => {
-    const { category } = req.params;
+    const { category, page, perPage, sortedBy } = req.query;
 
-    if (!category) throw new Error('Params(/:category) is missing');
-    const result = await BookService.readBookByCategory(category);
+    if (!category) throw new Error('Params category is missing');
+    if (!page) throw new Error('Params page is missing');
+    if (!perPage) throw new Error('Params perPage is missing');
+    if (!sortedBy) throw new Error('Params perPage is missing');
+    console.log(sortedBy);
+    const result = await BookService.readBookPerPage(page, perPage, category, sortedBy);
+
     res.json(result);
+  })
+);
+
+router.get(
+  '/countBookByCategory/',
+  asyncHandler(async (req, res) => {
+    const { category } = req.query;
+
+    if (!category) throw new Error('Params category is missing');
+    const count = await BookService.countBookByCategory(category);
+    res.json(count);
   })
 );
 

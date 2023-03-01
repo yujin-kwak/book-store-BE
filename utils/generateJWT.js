@@ -11,7 +11,8 @@ const generateJWT = (res, user) => {
   // send token to client
   // res.authHeader = token;
   // res.cookie('token', token, { httpOnly: false, maxAge: 3600000 });
-  res.send(token);
+  const userRole = user.role;
+  res.send({ token, userRole });
 };
 
 module.exports = generateJWT;

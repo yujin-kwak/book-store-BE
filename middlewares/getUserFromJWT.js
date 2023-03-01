@@ -4,18 +4,18 @@ const env = process.env;
 const jwt = require('jsonwebtoken');
 
 const getUserFromJWT = (req, res, next) => {
-  console.log('getUserFromJWT:', req.headers.authorization);
-
-  const userToken = req.headers['authorization'].split(' ')[1];
-  console.log('userToken', userToken);
   try {
+    if (!req.headers.authorization) throw new Error('Auth failed: No token provided');
+
+    const userToken = req.headers['authorization'].split(' ')[1];
+
     const decoded = jwt.verify(userToken, env.jwtSecret);
-    console.log('decoded', decoded);
+
     req.decoded = decoded;
     next();
   } catch (err) {
     res.status(401).json({
-      message: 'Auth failed',
+      message: 'Auth failed,No Token Provided',
       error: err
     });
     return;

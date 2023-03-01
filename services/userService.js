@@ -3,7 +3,7 @@ const UserModel = require('../models/schemas/user');
 const hashPassword = require('../utils/hashPassword');
 
 class UserService {
-  static async createUser({ name, email, password, phone, address }) {
+  static async createUser({ name, email, password, phone, address, role }) {
     const result = await UserModel.find({ email: email });
     console.log(result);
     if (result.length > 0) throw new Error('User already exists');
@@ -14,7 +14,8 @@ class UserService {
       email,
       password: hashedPassword,
       phone,
-      address
+      address,
+      role
     });
 
     await user.save();
@@ -22,14 +23,21 @@ class UserService {
   }
 
   static async readUser() {
-    const result = await UserModel.find({});
+    const result = await UserModel.find({}).sort({ name: 1 });
 
     return result;
   }
+  static async readUserById(id) {
+    const result = await UserModel.find({ _id: id });
+    console.log('readUserById', result);
+    return result ? result : null;
+  }
 
-  static async updateUser({ id, name, password, phone, address }) {
-    const userModified = await UserModel.updateOne({ _id: id }, { $set: { name, password, phone, address } });
-
+  static async updateUser({ userID, name, email, password, phone, address, role }) {
+    console.log('phone', userID);
+    const hashedPassword = hashPassword(password);
+    const userModified = await UserModel.updateOne({ _id: userID }, { name, email, password: hashedPassword, phone, address, role });
+    console.log(userModified);
     return userModified;
   }
 

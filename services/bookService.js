@@ -33,13 +33,13 @@ class BookService {
     return array;
   }
 
-  static async readBookById(id) {
-    const result = await BookModel.findById(id).populate('category', 'category');
+  static async readBookById(bookID) {
+    const result = await BookModel.findById({ _id: bookID }).populate('category', 'category');
     return result;
   }
 
-  static async updateBook({ id, title, author, category, price, salePrice, imageUrl, score, quantity, condition, publishedDate, publisher }) {
-    const bookModified = await BookModel.updateOne({ _id: id }, { $set: { title, author, category, price, salePrice, score, imageUrl, quantity, condition, publishedDate, publisher } });
+  static async updateBook({ bookID, title, author, category, price, salePrice, imageUrl, score, quantity, condition, publishedDate, publisher }) {
+    const bookModified = await BookModel.updateOne({ _id: bookID }, { title, author, category, price, salePrice, score, imageUrl, quantity, condition, publishedDate, publisher });
 
     return bookModified;
   }

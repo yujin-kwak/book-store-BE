@@ -16,15 +16,15 @@ const local = new LocalStrategy(config, async (email, password, done) => {
   try {
     console.log('email', email);
     const user = await UserService.getUserById(email);
+    console.log('user', user);
     if (!user) return done(null, false, { message: 'Incorrect Id' });
     const hashedPassword = hashPassword(password);
     if (hashedPassword !== user.password) return done(null, false, { message: 'Incorrect password' });
-    return done(null, { id: user._id });
+    return done(null, { id: user._id, role: user.role });
   } catch (err) {
     return done(err);
   }
 });
-
 
 const JwtStrategy = require('passport-jwt').Strategy; //jwt strategy
 
@@ -41,7 +41,6 @@ const opts = {
   jwtFromRequest: cookieExtractor,
   secretOrKey: env.jwtSecret
 };
-
 
 const jwt = new JwtStrategy(opts, (user, done) => {
   console.log('jwt-user', user);

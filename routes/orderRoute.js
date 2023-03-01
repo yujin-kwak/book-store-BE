@@ -11,6 +11,10 @@ router.post('/', getUserFromJWT, async (req, res, next) => {
   const status = '주문확인중';
 
   try {
+    const userID = req.decoded.id;
+    const userRole = req.decoded.role;
+    console.log('userID', userID);
+    console.log('userRole', userRole);
     const savedOrder = await OrderService.createOrder({ userID, userName, email, address, phone, totalPrice, status });
     const orderID = savedOrder._id;
     const savedOrderItem = await OrderService.createOrderItem(orderID, orderItemList);
@@ -21,8 +25,13 @@ router.post('/', getUserFromJWT, async (req, res, next) => {
   }
 });
 
-router.get('/', async (req, res, next) => {
+router.get('/', getUserFromJWT, async (req, res, next) => {
   try {
+    console.log('req.decoded', req.decoded);
+    const { id, role } = req.decoded;
+    if (!id) throw new Error('Missing required fields: id or you are not admin');
+    if (role !== 'admin') throw new Error('You are not admin');
+
     const result = await OrderService.readAllorder();
     res.status(200).json(result);
   } catch (err) {
@@ -33,9 +42,8 @@ router.get('/', async (req, res, next) => {
 
 // it will bring order and orderItem
 
-router.get('/:orderID', async (req, res, next) => {
+router.get('/:orderID', getUserFromJWT, async (req, res, next) => {
   const { orderID } = req.params;
-
   try {
     const result = await OrderService.readOrder(orderID);
     res.status(200).json({ result: result });
@@ -54,9 +62,12 @@ router.get('/noMemberOrder', async (req, res, next) => {
 // ********** 2021-08-04  order result return xx **********
 // it will update order only
 router.put('/', async (req, res, next) => {
+  console.log('req.decoded', req.decoded);
+  const { id: userID, role } = req.decoded;
+
   const { orderID: id } = req.query;
 
-  const { userID, userName, email, address, phone, totalPrice, status } = req.body;
+  const { userName, email, address, phone, totalPrice, status } = req.body;
   try {
     const result = await OrderService.updateOrder({ id, userID, userName, email, address, phone, totalPrice, status });
     res.json({ messsage: 'completed', order: result });
@@ -68,6 +79,8 @@ router.put('/', async (req, res, next) => {
 
 // it will delete order and orderItem
 router.delete('/', async (req, res, next) => {
+  console.log('req.decoded', req.decoded);
+  const { id: userID, role } = req.decoded;
   const { orderID: id } = req.query;
   try {
     const result = await OrderService.deleteOrder(id);
@@ -91,9 +104,11 @@ router.delete('/', async (req, res, next) => {
 // );
 
 router.get(
-  '/item',
+  '/item/:orderID',
   asyncHandler(async (req, res) => {
-    const { orderID } = req.query;
+    console.log('req.params: ', req.params);
+    console.log('req.query: ', req.query);
+    const { orderID } = req.params;
     const result = await OrderService.readItem(orderID);
     res.status(200).json(result);
   })
@@ -103,7 +118,7 @@ router.get(
 router.put(
   '/items',
   asyncHandler(async (req, res) => {
-    const { orderID } = req.params;
+    const { orderID } = req.query;
     const { bookID, bookTitle, quantity, salePrice } = req.body;
     const result = await OrderService.updateItem({ orderID, bookID, bookTitle, quantity, salePrice });
     res.status(200).json({ message: 'completed', order: result });

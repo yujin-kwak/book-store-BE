@@ -9,7 +9,7 @@ const BookSchema = new Schema(
     category: { type: Schema.Types.ObjectId, ref: 'BookCategoryModel' },
     // image: { data: Buffer, type: String, required: true },
     imageUrl: { type: String, required: true },
-    price: { type: String, required: true },
+    price: { type: Number, required: true },
     salePrice: { type: Number, required: true },
     score: { type: Number, default: 0, max: 100, min: 0, index: true },
     quantity: { type: Number, default: 0 },

@@ -64,8 +64,8 @@ class OrderService {
     return orderListAll;
   }
 
-  static async readOrderByUser(id) {
-    const orderList = await OrderModel.find({ userID: id }).populate('userID').sort({ createdAt: -1 });
+  static async readOrderByUser(userID) {
+    const orderList = await OrderModel.find({ userID }).populate('userID').sort({ createdAt: -1 });
     let orderListAll = [];
     for (const order of orderList) {
       const orderItemList = await OrderItemModel.find({ orderID: order._id }).populate('bookID').sort({ createdAt: -1 });
@@ -94,7 +94,12 @@ class OrderService {
   }
 
   static async readItem(orderID) {
-    const result = await OrderItemModel.find({ orderID: orderID });
+    console.log(orderID);
+    console.log('readItemresult', orderID);
+    const id = mongoose.Types.ObjectId(orderID);
+    console.log(id);
+    console.log('readItemresult2', typeof id);
+    const result = await OrderItemModel.find({ orderID: id });
     return result;
   }
 

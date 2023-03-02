@@ -108,10 +108,22 @@ router.put('/noMemberOrder', async (req, res, next) => {
 });
 
 // it will delete order and orderItem
-router.delete('/', async (req, res, next) => {
+router.delete('/', getUserFromJWT, async (req, res, next) => {
   try {
     console.log('req.decoded', req.decoded);
     const { id: userID, role } = req.decoded;
+
+    const { orderID: id } = req.query;
+    const result = await OrderService.deleteOrder(id);
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(404).json({ errorMessage: err });
+    console.log(err);
+  }
+});
+
+router.delete('/noMemberOrder', async (req, res, next) => {
+  try {
     const { orderID: id } = req.query;
     const result = await OrderService.deleteOrder(id);
     res.status(200).json(result);

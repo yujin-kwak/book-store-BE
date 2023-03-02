@@ -5,7 +5,7 @@ const BookModel = require('../models/schemas/book');
 const asyncHandler = require('../utils/asyncHandler');
 const multer = require('multer');
 const { route } = require('./orderRoute');
-const apiUrl = 'http://elice.iptime.org:8080/';
+const apiUrl = 'http://elice.iptime.org:8080/api';
 const path = require('path');
 const fs = require('fs');
 

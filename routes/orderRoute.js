@@ -7,10 +7,9 @@ const getUserFromJWT = require('../middlewares/getUserFromJWT');
 
 // it will create order and orderItem
 router.post('/', getUserFromJWT, async (req, res, next) => {
-  const { userID, userName, email, orderItemList, address, phone, totalPrice } = req.body;
-  const status = '주문확인중';
-
   try {
+    const { userName, email, orderItemList, address, phone, totalPrice } = req.body;
+    const status = '주문확인중';
     const userID = req.decoded.id;
     const userRole = req.decoded.role;
     console.log('userID', userID);
@@ -79,13 +78,13 @@ router.get('/noMemberOrder/:orderID', async (req, res, next) => {
 // ********** 2021-08-04  order result return xx **********
 // it will update order only
 router.put('/', async (req, res, next) => {
-  console.log('req.decoded', req.decoded);
-  const { id: userID, role } = req.decoded;
-
-  const { orderID: id } = req.query;
-
-  const { userName, email, address, phone, totalPrice, status } = req.body;
   try {
+    console.log('req.decoded', req.decoded);
+    const { id: userID, role } = req.decoded;
+
+    const { orderID: id } = req.query;
+
+    const { userName, email, address, phone, totalPrice, status } = req.body;
     const result = await OrderService.updateOrder({ id, userID, userName, email, address, phone, totalPrice, status });
     res.json({ messsage: 'completed', order: result });
   } catch (err) {
@@ -96,10 +95,10 @@ router.put('/', async (req, res, next) => {
 
 // it will delete order and orderItem
 router.delete('/', async (req, res, next) => {
-  console.log('req.decoded', req.decoded);
-  const { id: userID, role } = req.decoded;
-  const { orderID: id } = req.query;
   try {
+    console.log('req.decoded', req.decoded);
+    const { id: userID, role } = req.decoded;
+    const { orderID: id } = req.query;
     const result = await OrderService.deleteOrder(id);
     res.status(200).json(result);
   } catch (err) {

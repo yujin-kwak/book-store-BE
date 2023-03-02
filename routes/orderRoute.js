@@ -77,11 +77,25 @@ router.get('/noMemberOrder/:orderID', async (req, res, next) => {
 
 // ********** 2021-08-04  order result return xx **********
 // it will update order only
-router.put('/', async (req, res, next) => {
+router.put('/', getUserFromJWT, async (req, res, next) => {
   try {
     console.log('req.decoded', req.decoded);
+
     const { id: userID, role } = req.decoded;
 
+    const { orderID: id } = req.query;
+
+    const { userName, email, address, phone, totalPrice, status } = req.body;
+    const result = await OrderService.updateOrder({ id, userID, userName, email, address, phone, totalPrice, status });
+    res.json({ messsage: 'completed', order: result });
+  } catch (err) {
+    res.json({ errorMessage: err });
+    console.log(err);
+  }
+});
+
+router.put('/noMemberOrder', async (req, res, next) => {
+  try {
     const { orderID: id } = req.query;
 
     const { userName, email, address, phone, totalPrice, status } = req.body;

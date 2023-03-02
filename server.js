@@ -35,11 +35,11 @@ app.use(cookieParser());
 
 app.use(passport.initialize());
 
-app.use('/auth', authRouter);
-app.use('/users', userRouter);
-app.use('/books', bookRouter);
-app.use('/orders', orderRouter);
-app.use('/categories', categoryRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/books', bookRouter);
+app.use('/api/orders', orderRouter);
+app.use('/api/categories', categoryRouter);
 
 app.use(async (err, req, res, next) => {
   console.log(err.message);

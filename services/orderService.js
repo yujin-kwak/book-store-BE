@@ -76,11 +76,22 @@ class OrderService {
     return orderListAll;
   }
 
-  static async readNomemberOrder(orderId) {
-    const orderList = await OrderModel.find({ orderId: orderId }).populate('userID');
-    const orderItemList = await OrderItemModel.find({ orderId: orderId }).populate('bookID');
+  // static async readNomemberOrder(orderID) {
+  //   const orderList = await OrderModel.find({ _id: orderID }).populate('userID');
+  //   const orderItemList = await OrderItemModel.find({ orderID: orderID }).populate('bookID');
 
-    return { orderList, orderItemList };
+  //   return { orderList, orderItemList };
+  // }
+  static async readNomemberOrder(orderID) {
+    const orderList = await OrderModel.find({ _id: orderID }).populate('userID').sort({ createdAt: -1 });
+    let orderListAll = [];
+    for (const order of orderList) {
+      const orderItemList = await OrderItemModel.find({ orderID: order._id }).populate('bookID').sort({ createdAt: -1 });
+
+      orderListAll.push({ order, orderItemList });
+    }
+
+    return orderListAll;
   }
 
   static async updateOrder({ id, userID, userName, email, address, phone, totalPrice, status }) {

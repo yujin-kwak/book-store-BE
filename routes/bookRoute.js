@@ -91,7 +91,7 @@ router.put(
     const { bookID } = req.query;
     console.log('bookID', bookID);
     const { title, author, category, price, salePrice, score, stock, condition, publishedDate, publisher } = req.body;
-    console.log(req.body);
+    console.log('put req.body', req.body);
     const image = req.file;
     console.log('image', image);
     if (image) {

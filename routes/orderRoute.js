@@ -68,9 +68,11 @@ router.get('/:orderID', getUserFromJWT, async (req, res, next) => {
   }
 });
 
-router.get('/noMemberOrder', async (req, res, next) => {
-  const { orderId } = req.query;
-  const result = await OrderService.readNomemberOrder(orderId);
+router.get('/noMemberOrder/:orderID', async (req, res, next) => {
+  const { orderID } = req.params;
+  console.log('orderID no member', orderID);
+  const result = await OrderService.readNomemberOrder(orderID);
+  console.log('result', result);
   res.status(200).json(result);
 });
 

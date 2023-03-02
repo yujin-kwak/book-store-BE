@@ -57,3 +57,7 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
+
+/*
+API의 정의부터 보면, 'Application Programming Interface'의 약자로서 운영체제와 응용프로그램 사이의 통신에 사용되는 언어나 메시지 형식을 이야기합니다
+*/

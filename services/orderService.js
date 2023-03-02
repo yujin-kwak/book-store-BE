@@ -98,6 +98,10 @@ class OrderService {
     await OrderModel.updateOne({ _id: id }, { userID, userName, email, address, phone, totalPrice, status });
   }
 
+  static async updateOrderNoMember({ id, userName, email, address, phone, totalPrice, status }) {
+    await OrderModel.updateOne({ _id: id }, { userName, email, address, phone, totalPrice, status });
+  }
+
   static async deleteOrder(id) {
     await OrderModel.deleteOne({ _id: id });
     await OrderItemModel.deleteMany({ orderID: id });

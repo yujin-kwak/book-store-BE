@@ -99,7 +99,7 @@ router.put('/noMemberOrder', async (req, res, next) => {
     const { orderID: id } = req.query;
 
     const { userName, email, address, phone, totalPrice, status } = req.body;
-    const result = await OrderService.updateOrder({ id, userID, userName, email, address, phone, totalPrice, status });
+    const result = await OrderService.updateOrderNoMember({ id, userName, email, address, phone, totalPrice, status });
     res.json({ messsage: 'completed', order: result });
   } catch (err) {
     res.json({ errorMessage: err });

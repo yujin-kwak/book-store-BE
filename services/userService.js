@@ -33,10 +33,10 @@ class UserService {
     return result ? result : null;
   }
 
-  static async updateUser({ userID, name, email, password, phone, address, role }) {
+  static async updateUser({ userID, name, password, phone, address, role }) {
     console.log('phone', userID);
     const hashedPassword = hashPassword(password);
-    const userModified = await UserModel.updateOne({ _id: userID }, { name, email, password: hashedPassword, phone, address, role });
+    const userModified = await UserModel.updateOne({ _id: userID }, { name, password: hashedPassword, phone, address, role });
     console.log(userModified);
     return userModified;
   }

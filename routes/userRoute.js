@@ -70,14 +70,29 @@ router.put(
     console.log('userIDDDD', userID);
     if (!id) throw new Error('Missing required fields or you are not user approved');
     if (role !== 'admin') throw new Error('You are not admin');
-    const { name, email, password, phone, address, role: userRole } = req.body;
+    const { name, password, phone, address, role: userRole } = req.body;
 
-    if (!userID || !name || !email || !password || !phone || !address || !userRole) throw new Error('Missing required fields');
-    const result = await UserService.updateUser({ userID, name, email, password, phone, address, userRole });
+    if (!userID || !name || !password || !phone || !address || !userRole) throw new Error('Missing required fields');
+    const result = await UserService.updateUser({ userID, name, password, phone, address, userRole });
     console.log('result', result);
     res.status(200).json(result);
   })
 );
+
+router.delete(
+  '/user/:userID',
+  getUserFromJWT,
+  asyncHandler(async (req, res) => {
+    console.log('req.decoded', req.decoded);
+    const { id, role } = req.decoded;
+    const { userID } = req.params;
+    if (!id) throw new Error('Missing required fields or you are not user approved');
+    if (!id) throw new Error('Missing required fields');
+    const result = await UserService.deleteUser(userID);
+    res.status(200).json(result);
+  })
+);
+
 // checked
 router.put(
   '/mydetail',
@@ -86,10 +101,10 @@ router.put(
     console.log('req.decoded', req.decoded);
     const { id, role } = req.decoded;
     if (!id) throw new Error('Missing required fields or you are not user approved');
-    const { name, email, password, phone, address } = req.body;
+    const { name, password, phone, address } = req.body;
     console.log(req.body);
     if (!id || !name || !phone || !address) throw new Error('Missing required fields!!!');
-    const result = await UserService.updateUser({ userID: id, name, email, password, phone, address, role });
+    const result = await UserService.updateUser({ userID: id, name, password, phone, address, role });
     res.status(200).json(result);
   })
 );
